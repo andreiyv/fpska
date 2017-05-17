@@ -10,7 +10,8 @@ ConvertToYV12()
 # https://www.svp-team.com/w/index.php?title=Plugins:_SVPflow
 super_params="{pel:1,gpu:0}"
 
-analyse_params="""{gpu:0,vectors:3,block:{w:16,h:16,overlap:2}, 
+analyse_params="""{gpu:0,vectors:3,block:{w:16,h:16,overlap:2},
+        levels:3,
 	main:{search:{type:4,sort:true,distance:64,satd:true,coarse:{distance:16},trymany:true},bad:{sad:1000,range:-24}},
 	refine:[{thsad:200}]}"""
 
