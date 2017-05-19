@@ -4,5 +4,8 @@ ffmpegsource2(«видео.avi»)
 меняем видео.avi на то что вы собираетесь перекодировать в 60fps (не обязательно avi может быть и mp4 и вообще любой видеоформат);
 3) запускаем перекодирование пуском go.bat, перекодированный мувик будет в 50_60fps.avi.
 
+git fetch origin
+git checkout -b some_branch origin/some_branch
+
 https://www.svp-team.com/wiki/Download/ru
 https://www.svp-team.com/w/index.php?title=Plugins:_SVPflow
