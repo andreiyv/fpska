@@ -7,4 +7,5 @@ rem %cd%/ffmpeg/ffmpeg.exe -i %cd%/scripts/50_60fps_no_GPU.avs -c:v libx264 -pre
 
 
 rem %cd%/x264/x264-r2762-90a61ec.exe --output "60fps.mkv" "%cd%\scripts\50_60fps_no_GPU.avs"
-%cd%/x264/x264-win32.exe --qp 16 --output "60fps.mkv" "%cd%\scripts\50_60fps_no_GPU.avs"
+%cd%/x264/x264-win32.exe --output "60fps.mkv" "%cd%\scripts\w8.avs"
+rem %cd%/x264/x264-win32.exe --qp 9 --output "fullhd.mkv" "%cd%\scripts\resize.avs"
