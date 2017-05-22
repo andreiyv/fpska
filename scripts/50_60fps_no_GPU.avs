@@ -4,16 +4,16 @@ LoadPlugin("..\svpflow\svpflow2.dll")
 LoadPlugin("..\FFMS2\ffms2.dll")
 SetMTMode(2,4)
 Import("..\FFMS2\FFMS2.avsi")
-ffmpegsource2("..\fullhd.mkv")
+ffmpegsource2("..\VBR.mp4")
 ConvertToYV12()
 
 # https://www.svp-team.com/w/index.php?title=Plugins:_SVPflow
 
-super_params="{pel:2,gpu:1}"
+super_params="{pel:2,gpu:0}"
 
-analyse_params="""{gpu:1,vectors:3,block:{block:{w:16}, refine:[{thsad:1000}],overlap:3},
-        levels:3,
-	main:{search:{type:4,sort:true,distance:64,satd:true,coarse:{type:4,distance:64},trymany:true},bad:{sad:1000,range:-24}},
+analyse_params="""{gpu:0,vectors:3,block:{block:{w:8}, refine:[{thsad:1000}],overlap:3},
+        levels:5,
+	main:{search:{type:4,sort:true,distance:256,satd:true,coarse:{type:4,distance:256},trymany:true},bad:{sad:1000,range:-256}},
 	refine:[{thsad:200}]}"""
 
 smoothfps_params="{rate:{num:2,den:1},algo:23}"
