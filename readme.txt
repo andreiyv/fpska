@@ -9,6 +9,7 @@ ffmpegsource2(«видео.avi»)
 
 git fetch origin
 git checkout -b some_branch origin/some_branch
+git push -u origin branch
 
 https://www.svp-team.com/wiki/Download/ru
 https://www.svp-team.com/w/index.php?title=Plugins:_SVPflow
