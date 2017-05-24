@@ -2,7 +2,7 @@
 LoadPlugin("..\svpflow\svpflow1.dll")
 LoadPlugin("..\svpflow\svpflow2.dll")
 LoadPlugin("..\FFMS2\ffms2.dll")
-threads=4
+threads=nthreads
 SetMTMode(2,threads)
 Import("..\FFMS2\FFMS2.avsi")
 ffmpegsource2("..\fullhd.mkv")
