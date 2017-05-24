@@ -24,7 +24,7 @@ endlocal
 
 @echo on
 
-%cd%/x264/explorer_tools.exe --preset veryslow --output "60fps.mkv" "%cd%\scripts\work.avs"
+%cd%/x264/x264-win32.exe --preset veryslow --output "60fps.mkv" "%cd%\scripts\work.avs"
 
 
 
