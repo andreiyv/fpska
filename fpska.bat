@@ -24,10 +24,12 @@ endlocal
 
 @echo on
 
-%cd%/x264/x264-win32.exe --preset veryslow --output "60fps.mkv" "%cd%\scripts\work.avs"
+rem %cd%/x264/x264-win32.exe --preset veryslow --output "60fps.mkv" "%cd%\scripts\work.avs"
+%cd%\mencoder\mencoder.exe "scripts\work.avs" -oac copy -ovc x264 -x264encopts preset=veryslow -o "60fps.mkv"
+rem ffmpeg\ffmpeg.exe  -i "%cd%\scripts\work.avs"  -c:v libx264  -x264-params preset=slow  -y video.mkv
 
-del %cd%\scripts\work.avs
-del *.ffindex
+rem del %cd%\scripts\work.avs
+rem del *.ffindex
 
 echo %time%
 
