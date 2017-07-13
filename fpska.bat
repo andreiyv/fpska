@@ -26,11 +26,8 @@ endlocal
 
 %cd%/x264/x264-win32.exe --preset veryslow --output "60fps.mkv" "%cd%\scripts\work.avs"
 
-
-
-rem del %cd%\scripts\work.avs
-rem del *.ffindex
-
+del %cd%\scripts\work.avs
+del *.ffindex
 
 echo %time%
 
