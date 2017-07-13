@@ -1,9 +1,0 @@
-1) устанавливаем Avisynth из архива (AviSynth_260.exe);
-1.1) подменяем Avisynth dll'ку, чтобы использовать многозадачность;
-2) в файлике 50_60fps.avs в строчке:
-ffmpegsource2(«видео.avi»)
-меняем видео.avi на то что вы собираетесь перекодировать в 60fps (не обязательно avi может быть и mp4 и вообще любой видеоформат);
-3) запускаем перекодирование пуском go.bat, перекодированный мувик будет в 50_60fps.avi.
-
-https://www.svp-team.com/wiki/Download/ru
-https://www.svp-team.com/w/index.php?title=Plugins:_SVPflow

@@ -1,3 +1,34 @@
-rem mencoder.exe sample.avs -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=9000000:mbd=2:trell:v4mv:last_pred=3:predia=2:dia=2:vmax_b_frames=2:vb_strategy=1:precmp=2:cmp=2:subcmp=2:preme=2:keyint=30 -o CAM01576_60fps_mencoder.mkv
-#ffmpeg -i 50_60fps.avs -c:v libx264 -preset slow -crf 15 -filter:v hqdn3d=5.0 -c:a copy 50_60fps.avi
-ffmpeg -i 50_60fps.avs -c:v libx264 -preset slow -crf 15 -c:a copy 50_60fps.avi
+@echo off &setlocal
+setlocal enabledelayedexpansion
+
+echo %time%
+
+copy %cd%\scripts\fpska.avs %cd%\scripts\work.avs
+
+set "search=fullhd.mkv"
+set "search_threads=nthreads"
+set "replace=%1"
+set "threads=%2"
+set "textfile=%cd%\scripts\work.avs"
+set "newfile=%cd%\scripts\tmp.txt"
+
+(for /f "delims=" %%i in (%textfile%) do (
+    set "line=%%i"
+    set "line=!line:%search%=%replace%!"
+    set "line=!line:%search_threads%=%threads%!"
+    echo(!line!
+))>"%newfile%"
+del %cd%\scripts\work.avs
+ren %cd%\scripts\tmp.txt work.avs
+endlocal
+
+@echo on
+
+%cd%/x264/x264-win32.exe --preset veryslow --output "60fps.mkv" "%cd%\scripts\work.avs"
+
+del %cd%\scripts\work.avs
+del *.ffindex
+
+echo %time%
+
+
