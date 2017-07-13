@@ -28,7 +28,7 @@ endlocal
 @echo on
 
 rem %cd%/x264/x264-win32.exe --preset veryslow --output "60fps.mkv" "%cd%\scripts\work.avs"
-%cd%\mencoder\mencoder.exe "%cd%\scripts\work.avs" -oac copy -ovc x264 -x264encopts preset=veryslow -o "60fps.mp4"
+%cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryslow -o 60fps.mp4
 rem ffmpeg\ffmpeg.exe  -i "%cd%\scripts\work.avs"  -c:v libx264  -x264-params preset=slow  -y video.mkv
 
 rem del %cd%\scripts\work.avs
