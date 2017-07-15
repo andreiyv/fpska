@@ -32,7 +32,7 @@ del %cd%\scripts\work.avs
 del *.ffindex
 
 rem merge audio and 60fps video
-%cd%\mencoder\mencoder.exe -audiofile audio.wav 60fps.mp4 -o 60fps_video_and_audio.mp4 -ovc copy -oac copy
+mencoder\mencoder.exe -audiofile audio.wav 60fps.mp4 -o 60fps_video_and_audio.mp4 -ovc copy -oac copy
 
 del %cd%\60fps.mp4
 del audio.wav
