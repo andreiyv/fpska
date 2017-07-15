@@ -5,6 +5,7 @@ echo %time%
 
 rem extract audio
 %cd%\mencoder\mplayer.exe -vc dummy -vo null -ao pcm:file=audio.wav,fast %1
+rem %cd%\mencoder\mplayer.exe -ss 00:05:00 -endpos 00:00:09 -vc dummy -vo null -ao pcm:file=audio.wav,fast %1
 
 copy %cd%\scripts\fpska.avs %cd%\scripts\work.avs
 
@@ -36,7 +37,7 @@ rem del *.ffindex
 
 %cd%\mencoder\mencoder.exe -audiofile audio.wav 60fps.mp4 -o 60fps_video_and_audio.mp4 -ovc copy -oac copy
 
-
+rem mplayer -vo null -ao null -identify -frames 0 /path/to/file
 
 echo %time%
 
