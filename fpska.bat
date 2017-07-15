@@ -1,6 +1,25 @@
 @echo off &setlocal
 setlocal enabledelayedexpansion
 
+if exist %cd%\svpflow\svpflow1.dll (
+    rem file exists
+) else (
+    echo "---------------------------"
+    echo Net biblioteki svpflow1.dll
+    echo "---------------------------"
+    exit /B
+)
+
+if exist %cd%\svpflow\svpflow2.dll (
+    rem file exists
+) else (
+    echo "---------------------------"
+    echo Net biblioteki svpflow2.dll
+    echo "---------------------------"
+    exit /B
+)
+@echo off
+
 echo %time%
 
 rem extract audio
