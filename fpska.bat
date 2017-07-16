@@ -6,6 +6,7 @@ if exist %cd%\svpflow\svpflow1.dll (
 ) else (
     echo "---------------------------"
     echo Net biblioteki svpflow1.dll
+    echo svpflow\readme.txt - instruktsiya po ustanovke
     echo "---------------------------"
     exit /B
 )
@@ -15,6 +16,7 @@ if exist %cd%\svpflow\svpflow2.dll (
 ) else (
     echo "---------------------------"
     echo Net biblioteki svpflow2.dll
+    echo svpflow\readme.txt - instruktsiya po ustanovke
     echo "---------------------------"
     exit /B
 )
@@ -25,12 +27,19 @@ echo %time%
 rem extract audio
 %cd%\mencoder\mplayer.exe -vc dummy -vo null -ao pcm:file=audio.wav,fast %1
 
-copy %cd%\scripts\fpska.avs %cd%\scripts\work.avs
+rem prepare script
+if "%2"=="slow" (
+echo "slow"
+copy %cd%\scripts\fpska_slow.avs %cd%\scripts\work.avs
+) else if "%2"=="fast" (
+echo "fast"
+copy %cd%\scripts\fpska_fast.avs %cd%\scripts\work.avs
+)
 
 set "search=fullhd.mkv"
 set "search_threads=nthreads"
 set "replace=%1"
-set "threads=%2"
+set "threads=%3"
 set "textfile=%cd%\scripts\work.avs"
 set "newfile=%cd%\scripts\tmp.txt"
 
@@ -47,7 +56,7 @@ endlocal
 rem convert to 60fps video
 mencoder\mencoder.exe scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryslow -o 60fps.mp4
 
-del %cd%\scripts\work.avs
+rem del %cd%\scripts\work.avs
 del *.ffindex
 
 rem merge audio and 60fps video
