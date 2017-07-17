@@ -17,6 +17,14 @@
 * скачиваем библиотеку svpflow (http://www.svp-team.com/files/gpl/svpflow-4.0.0.128.zip), распаковываем архив,
 файлы svpflow-4.0.0.128\lib-windows\avisynth\x32\svpflow1.dll и svpflow2.dll копируем в папку fpska\svpflow\.
 Внимание, берем именно 32-битные файлы.
+Если svpflow1.dll и svpflow2.dll не будут скопированы в папку fpska\svpflow, то при запуске конвертирования будет сообщение об ошибке:
+```javascript
+"---------------------------"
+Net biblioteki svpflow1.dll
+svpflow\readme.txt - instruktsiya po ustanovke
+"---------------------------"
+```
+
 
 ### Запуск
 fpska.bat <файл с видео> <режим> <число процессоров>
