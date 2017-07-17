@@ -8,13 +8,13 @@ Import("..\FFMS2\FFMS2.avsi")
 ffmpegsource2("..\fullhd.mkv")
 ConvertToYV12()
 
-super_params="{pel:2,gpu:0}"
+super_params="{pel:1,gpu:0}"
 
 analyse_params="""{block:{w:32,h:32}, 
-	main:{search:{coarse:{distance:-10}}},
+	main:{search:{coarse:{distance:0}}},
 	refine:[{thsad:200}]}"""
 
-smoothfps_params="{rate:{num:5,den:2},algo:21}"
+smoothfps_params="{rate:{num:2,den:1},algo:1}"
 
 super = SVSuper(super_params)
 vectors = SVAnalyse(super, analyse_params)

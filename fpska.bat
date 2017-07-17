@@ -54,7 +54,15 @@ ren %cd%\scripts\tmp.txt work.avs
 endlocal
 
 rem convert to 60fps video
+if "%2"=="slow" (
+echo "slow"
 mencoder\mencoder.exe scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryslow -o 60fps.mp4
+) else if "%2"=="fast" (
+echo "fast"
+mencoder\mencoder.exe scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryfast -o 60fps.mp4
+)
+
+
 
 rem del %cd%\scripts\work.avs
 del *.ffindex
