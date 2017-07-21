@@ -75,6 +75,7 @@ rem del 60fps_audio.wav
 rem ren 60fps_video_and_audio.mp4 60fps.mp4
 
 rem mplayer -vo null -ao null -identify -frames 0 /path/to/file
+rem mencoder\mencoder video.MTS -demuxer lavf -oac copy -ovc copy -of lavf=mp4 -o mtsvideo.mp4
 
 echo %time%
 
