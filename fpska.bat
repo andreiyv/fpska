@@ -1,6 +1,29 @@
 @echo off &setlocal
 setlocal enabledelayedexpansion
 
+if [%1]==[] (
+echo "Vvedite imya video"
+exit
+)
+
+
+set method=fast
+set ncpu=2
+
+if [%2]==[] (
+set method=slow
+) else (
+set method=%2
+)
+
+if [%3]==[] (
+set ncpu=2
+) else (
+set ncpu=%3
+)
+
+echo "ncpu: " !ncpu!
+
 if exist %cd%\svpflow\svpflow1.dll (
     rem file exists
 ) else (
@@ -25,13 +48,13 @@ if exist %cd%\svpflow\svpflow2.dll (
 echo %time%
 
 rem extract audio
-%cd%\mencoder\mplayer.exe -vc dummy -vo null -ao pcm:file=60fps_audio.wav,fast %1
+rem %cd%\mencoder\mplayer.exe -vc dummy -vo null -ao pcm:file=60fps_audio.wav,fast %1
 
 rem prepare script
-if "%2"=="slow" (
+if "!method!"=="slow" (
 echo "slow"
 copy %cd%\scripts\fpska_slow.avs %cd%\scripts\work.avs
-) else if "%2"=="fast" (
+) else if "!method!"=="fast" (
 echo "fast"
 copy %cd%\scripts\fpska_fast.avs %cd%\scripts\work.avs
 )
@@ -39,7 +62,9 @@ copy %cd%\scripts\fpska_fast.avs %cd%\scripts\work.avs
 set "search=fullhd.mkv"
 set "search_threads=nthreads"
 set "replace=%1"
-set "threads=%3"
+set "threads=!ncpu!"
+echo "threads: " !threads!
+
 set "textfile=%cd%\scripts\work.avs"
 set "newfile=%cd%\scripts\tmp.txt"
 
@@ -54,10 +79,10 @@ ren %cd%\scripts\tmp.txt work.avs
 endlocal
 
 rem convert to 60fps video
-if "%2"=="slow" (
+if "!method!"=="slow" (
 echo "slow"
 mencoder\mencoder.exe scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryslow -o 60fps_video.mp4
-) else if "%2"=="fast" (
+) else if "!method!"=="fast" (
 echo "fast"
 mencoder\mencoder.exe scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryfast -o 60fps_video.mp4
 )
