@@ -2,10 +2,9 @@
 setlocal enabledelayedexpansion
 
 if [%1]==[] (
-echo "Vvedite imya video"
+echo Vvedite imya video
 exit
 )
-
 
 set method=fast
 set ncpu=2
@@ -23,7 +22,7 @@ set ncpu=%3
 )
 
 echo "ncpu: " !ncpu!
-
+echo "1 method: " !method!
 if exist %cd%\svpflow\svpflow1.dll (
     rem file exists
 ) else (
@@ -48,17 +47,17 @@ if exist %cd%\svpflow\svpflow2.dll (
 echo %time%
 
 rem extract audio
-rem %cd%\mencoder\mplayer.exe -vc dummy -vo null -ao pcm:file=60fps_audio.wav,fast %1
+%cd%\mencoder\mplayer.exe -vc dummy -vo null -ao pcm:file=60fps_audio.wav,fast %1
 
 rem prepare script
 if "!method!"=="slow" (
-echo "slow"
+rem echo "slow"
 copy %cd%\scripts\fpska_slow.avs %cd%\scripts\work.avs
 ) else if "!method!"=="fast" (
-echo "fast"
+rem echo "fast"
 copy %cd%\scripts\fpska_fast.avs %cd%\scripts\work.avs
 )
-
+echo "2 method: " !method!
 set "search=fullhd.mkv"
 set "search_threads=nthreads"
 set "replace=%1"
@@ -76,7 +75,9 @@ set "newfile=%cd%\scripts\tmp.txt"
 ))>"%newfile%"
 del %cd%\scripts\work.avs
 ren %cd%\scripts\tmp.txt work.avs
-endlocal
+
+
+echo "3 method: " !method!
 
 rem convert to 60fps video
 if "!method!"=="slow" (
@@ -90,7 +91,7 @@ mencoder\mencoder.exe scripts\work.avs -oac copy -ovc x264 -x264encopts preset=v
 
 
 rem del %cd%\scripts\work.avs
-del *.ffindex
+rem del *.ffindex
 
 rem merge audio and 60fps video
 mencoder\mencoder.exe -audiofile 60fps_audio.wav 60fps_video.mp4 -o 60fps_video_and_audio.mp4 -ovc copy -oac copy
@@ -101,7 +102,7 @@ rem ren 60fps_video_and_audio.mp4 60fps.mp4
 
 rem mplayer -vo null -ao null -identify -frames 0 /path/to/file
 rem mencoder\mencoder video.MTS -demuxer lavf -oac copy -ovc copy -of lavf=mp4 -o mtsvideo.mp4
-
+endlocal
 echo %time%
 
 
