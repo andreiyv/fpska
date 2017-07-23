@@ -6,7 +6,23 @@ echo Vvedite imya video
 exit
 )
 
-echo "video: " %~f1
+echo "full video path: " %~f1
+echo "video extension: " %~x1
+
+set video_file=%~f1
+echo "video_file: " !video_file!
+
+if "%~x1"==".MTS" (
+echo "this is mts video need to convert"
+%cd%\mencoder\mencoder !video_file! -demuxer lavf -oac copy -ovc copy -of lavf=mp4 -o %cd%\mtsvideo.mp4
+set video_file=mtsvideo.mp4
+)
+
+if "%~x1"==".mts" (
+echo "this is mts video need to convert"
+%cd%\mencoder\mencoder !video_file! -demuxer lavf -oac copy -ovc copy -of lavf=mp4 -o %cd%\mtsvideo.mp4
+set video_file=mtsvideo.mp4
+)
 
 set method=fast
 set ncpu=2
@@ -62,7 +78,7 @@ copy %cd%\scripts\fpska_fast.avs %cd%\scripts\work.avs
 echo "2 method: " !method!
 set "search=fullhd.mkv"
 set "search_threads=nthreads"
-set "replace=%~f1"
+set "replace=!video_file!"
 set "threads=!ncpu!"
 echo "threads: " !threads!
 
