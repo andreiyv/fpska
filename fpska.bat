@@ -6,6 +6,8 @@ echo Vvedite imya video
 exit
 )
 
+echo "video: " %~f1
+
 set method=fast
 set ncpu=2
 
@@ -60,7 +62,7 @@ copy %cd%\scripts\fpska_fast.avs %cd%\scripts\work.avs
 echo "2 method: " !method!
 set "search=fullhd.mkv"
 set "search_threads=nthreads"
-set "replace=%1"
+set "replace=%~f1"
 set "threads=!ncpu!"
 echo "threads: " !threads!
 
@@ -82,10 +84,10 @@ echo "3 method: " !method!
 rem convert to 60fps video
 if "!method!"=="slow" (
 echo "slow"
-mencoder\mencoder.exe scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryslow -o 60fps_video.mp4
+%cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryslow -o %cd%\60fps_video.mp4
 ) else if "!method!"=="fast" (
 echo "fast"
-mencoder\mencoder.exe scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryfast -o 60fps_video.mp4
+%cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryfast -o %cd%\60fps_video.mp4
 )
 
 
@@ -94,7 +96,7 @@ rem del %cd%\scripts\work.avs
 rem del *.ffindex
 
 rem merge audio and 60fps video
-mencoder\mencoder.exe -audiofile 60fps_audio.wav 60fps_video.mp4 -o 60fps_video_and_audio.mp4 -ovc copy -oac copy
+%cd%\mencoder\mencoder.exe -audiofile 60fps_audio.wav 60fps_video.mp4 -o 60fps_video_and_audio.mp4 -ovc copy -oac copy
 
 rem del %cd%\60fps_video.mp4
 rem del 60fps_audio.wav
@@ -104,5 +106,5 @@ rem mplayer -vo null -ao null -identify -frames 0 /path/to/file
 rem mencoder\mencoder video.MTS -demuxer lavf -oac copy -ovc copy -of lavf=mp4 -o mtsvideo.mp4
 endlocal
 echo %time%
-
+pause
 

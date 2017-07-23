@@ -5,7 +5,7 @@ LoadPlugin("..\FFMS2\ffms2.dll")
 threads=nthreads
 SetMTMode(2,threads)
 Import("..\FFMS2\FFMS2.avsi")
-ffmpegsource2("..\fullhd.mkv")
+ffmpegsource2("fullhd.mkv")
 ConvertToYV12()
 
 super_params="{pel:2,gpu:0}"
