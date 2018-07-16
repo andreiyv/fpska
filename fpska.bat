@@ -100,7 +100,7 @@ echo "3 method: " !method!
 rem convert to 60fps video
 if "!method!"=="slow" (
 echo "slow"
-%cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryslow -o %cd%\60fps_video.mp4
+%cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryslow:tune=film:crf=9:fast_pskip=0:threads=auto -o %cd%\60fps_video.mp4
 ) else if "!method!"=="fast" (
 echo "fast"
 %cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryfast -o %cd%\60fps_video.mp4
