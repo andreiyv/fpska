@@ -100,7 +100,7 @@ echo "3 method: " !method!
 rem convert to 60fps video
 if "!method!"=="slow" (
 echo "slow"
-%cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryslow:bitrate=18000:threads=auto -o %cd%\60fps_video.mp4
+%cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryslow:bitrate=14000:threads=auto -o %cd%\60fps_video.mp4
 ) else if "!method!"=="fast" (
 echo "fast"
 %cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryfast -o %cd%\60fps_video.mp4
@@ -112,7 +112,8 @@ rem del %cd%\scripts\work.avs
 rem del *.ffindex
 
 rem merge audio and 60fps video
-%cd%\mencoder\mencoder.exe -audiofile 60fps_audio.wav 60fps_video.mp4 -o 60fps_video_and_audio.mp4 -ovc copy -oac copy
+rem %cd%\mencoder\mencoder.exe -audiofile 60fps_audio.wav 60fps_video.mp4 -o 60fps_video_and_audio.mp4 -ovc copy -oac copy
+%cd%\ffmpeg\ffmpeg.exe -i 60fps_video.mp4 -i 60fps_audio.wav -c:v copy -c:a copy -shortest 60fps_video_and_audio.mp4 -loglevel fatal
 
 rem del %cd%\60fps_video.mp4
 rem del 60fps_audio.wav
