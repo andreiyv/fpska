@@ -65,7 +65,7 @@ if exist %cd%\svpflow\svpflow2.dll (
 echo %time%
 
 rem extract audio
-%cd%\mencoder\mplayer.exe -vc dummy -vo null -ao pcm:file=60fps_audio.wav,fast %1
+%cd%\mencoder\mplayer.exe -vc dummy -vo null -ao pcm:file=60fps_audio.wav,fast %1 -msglevel all=0
 
 rem prepare script
 if "!method!"=="slow" (
