@@ -2,8 +2,8 @@
 LoadPlugin("..\svpflow\svpflow1.dll")
 LoadPlugin("..\svpflow\svpflow2.dll")
 LoadPlugin("..\FFMS2\ffms2.dll")
-threads=nthreads
-SetMTMode(2,threads)
+#threads=nthreads
+#SetMTMode(2,threads)
 Import("..\FFMS2\FFMS2.avsi")
 ffmpegsource2("fullhd.mkv")
 ConvertToYV12()
@@ -20,7 +20,7 @@ smoothfps_params="{rate:{num:2,den:1},algo:23}"
 
 super = SVSuper(super_params)
 vectors = SVAnalyse(super, analyse_params)
-smooth = SVSmoothFps(super, vectors, smoothfps_params, mt=threads)
+smooth = SVSmoothFps(super, vectors, smoothfps_params, mt=0)
 
 
 smooth
