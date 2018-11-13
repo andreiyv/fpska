@@ -1,6 +1,8 @@
 svpflow/svpflow*.dll
 scripts/work.avs
 60fps.mp4
+60fps_audio.wav
+60fps_video.mp4
 *.avi
 *.mov
 *.mkv
