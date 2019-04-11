@@ -1,7 +1,3 @@
-FFMS2/*.exe
-FFMS2/*.dll
-FFMS2/*.lib
-FFMS2/*.avsi
 ffmpeg/*.exe
 mencoder/*.exe
 mencoder/*.dll
