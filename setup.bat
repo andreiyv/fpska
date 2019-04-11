@@ -5,11 +5,11 @@ copy %~dp0distr\avisynth.dll c:\Windows\System32
 
 rem FFMS2
 %~dp0distr\curl.exe -L https://github.com/FFMS/ffms2/releases/download/2.22/ffms2-2.22-msvc.7z --output %~dp0\FFMS2\ffms2-2.22-msvc.7z
-%~dp0distr\7za.exe x %~dp0\FFMS2\fffms2-2.22-msvc.7z -o%~dp0\FFMS2
-copy %~dp0\FFMS2\fffms2-2.22-msvc\x64\*.* %~dp0\FFMS2
-copy %~dp0\FFMS2\fffms2-2.22-msvc\*.avsi %~dp0\FFMS2
-del %~dp0\FFMS2\fffms2-2.22-msvc.7z
-rmdir /S/Q %~dp0\FFMS2\fffms2-2.22-msvc
+%~dp0distr\7za.exe x %~dp0\FFMS2\ffms2-2.22-msvc.7z -o%~dp0\FFMS2
+copy %~dp0\FFMS2\ffms2-2.22-msvc\x64\*.* %~dp0\FFMS2
+copy %~dp0\FFMS2\ffms2-2.22-msvc\*.avsi %~dp0\FFMS2
+del %~dp0\FFMS2\ffms2-2.22-msvc.7z
+rmdir /S/Q %~dp0\FFMS2\ffms2-2.22-msvc
 
 rem Mencoder
 %~dp0distr\curl.exe https://kent.dl.sourceforge.net/project/mplayerwin/MPlayer-MEncoder/r38119/mplayer-svn-38119.7z --output %~dp0\mencoder\mplayer-svn-38119.7z

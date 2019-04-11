@@ -4,6 +4,7 @@ FFMS2/*.lib
 FFMS2/*.avsi
 ffmpeg/*.exe
 mencoder/*.exe
+mencoder/*.dll
 svpflow/*.dll
 scripts/work.avs
 60fps.mp4
@@ -16,3 +17,5 @@ scripts/work.avs
 *.divx
 *.xvid
 *.ffindex
+*.zip
+*.7z
