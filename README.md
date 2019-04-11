@@ -11,20 +11,7 @@
 поэтому все настройки были "взвинчены" на максимальный уровень.
 
 ## Установка
-* устанавливаем Avisynth из архива distr\AviSynth_260.exe (устанавливаем, как обычное приложение, следуем инструкциям инсталлятора)
-* копируем dll'ку distr\avisynth.dll в папки c:\Windows\SysWOW64\ и c:\Windows\System32\
-Это многопоточная версия Avisynth библиотеки, специально собранная для работы сплагином svpflow;
-* скачиваем библиотеку svpflow (http://www.svp-team.com/files/gpl/svpflow-4.0.0.128.zip), распаковываем архив,
-файлы svpflow-4.0.0.128\lib-windows\avisynth\x32\svpflow1.dll и svpflow2.dll копируем в папку fpska\svpflow\.
-Внимание, берем именно 32-битные файлы.
-Если svpflow1.dll и svpflow2.dll не будут скопированы в папку fpska\svpflow, то при запуске конвертирования будет сообщение об ошибке:
-```javascript
-"---------------------------"
-Net biblioteki svpflow1.dll
-svpflow\readme.txt - instruktsiya po ustanovke
-"---------------------------"
-```
-
+setup.bat from Administrator
 
 ### Запуск
 fpska.bat <файл с видео> <режим> <число процессоров>
