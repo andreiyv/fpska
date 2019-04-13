@@ -1,6 +1,8 @@
 @echo off &setlocal
 setlocal enabledelayedexpansion
 
+set ffmpeg_threads=1
+
 if [%1]==[] (
 echo Vvedite imya video
 exit
@@ -12,19 +14,19 @@ echo "video extension: " %~x1
 set video_file=%~f1
 echo "video_file: " !video_file!
 
-if "%~x1"==".MTS" (
-echo "this is mts video need to convert"
-%cd%\mencoder\mencoder !video_file! -demuxer lavf -oac copy -ovc copy -of lavf=mp4 -o %cd%\mtsvideo.mp4
-set video_file=mtsvideo.mp4
-)
+rem if "%~x1"==".MTS" (
+rem echo "this is mts video need to convert"
+rem %cd%\mencoder\mencoder !video_file! -demuxer lavf -oac copy -ovc copy -of lavf=mp4 -o %cd%\mtsvideo.mp4
+rem set video_file=mtsvideo.mp4
+rem )
 
-if "%~x1"==".mts" (
-echo "this is mts video need to convert"
-%cd%\mencoder\mencoder !video_file! -demuxer lavf -oac copy -ovc copy -of lavf=mp4 -o %cd%\mtsvideo.mp4
-set video_file=mtsvideo.mp4
-)
+rem if "%~x1"==".mts" (
+rem echo "this is mts video need to convert"
+rem %cd%\mencoder\mencoder !video_file! -demuxer lavf -oac copy -ovc copy -of lavf=mp4 -o %cd%\mtsvideo.mp4
+rem set video_file=mtsvideo.mp4
+rem )
 
-set method=fast
+set method=slow
 set ncpu=2
 
 if [%2]==[] (
@@ -66,7 +68,7 @@ echo %time%
 
 rem extract audio
 rem %cd%\mencoder\mplayer.exe -vc dummy -vo null -ao pcm:file=60fps_audio.wav,fast %1 -msglevel all=0
-%cd%\ffmpeg\ffmpeg.exe -i %1 -vn -acodec copy 60fps_audio.wav
+%cd%\ffmpeg\ffmpeg.exe -y -i %1 -vn -acodec copy 60fps_audio.aac
 
 rem prepare script
 if "!method!"=="slow" (
@@ -101,20 +103,20 @@ echo "3 method: " !method!
 rem convert to 60fps video
 if "!method!"=="slow" (
 echo "slow"
-%cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryslow:bitrate=14000:threads=auto -o %cd%\60fps_video.mp4
+rem %cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryslow:bitrate=14000:threads=auto -o %cd%\60fps_video.mp4
+%cd%\ffmpeg\ffmpeg.exe -y -i %cd%\scripts\work.avs -c:a copy -c:v libx264 -crf 20 -preset slow %cd%\60fps_video.mp4
 ) else if "!method!"=="fast" (
 echo "fast"
-%cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryfast -o %cd%\60fps_video.mp4
+rem %cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryfast -o %cd%\60fps_video.mp4
+%cd%\ffmpeg\ffmpeg.exe -y -i %cd%\scripts\work.avs -c:a copy -c:v libx264 -crf 20 -preset slow %cd%\60fps_video.mp4
 )
-
-
 
 rem del %cd%\scripts\work.avs
 rem del *.ffindex
 
 rem merge audio and 60fps video
 rem %cd%\mencoder\mencoder.exe -audiofile 60fps_audio.wav 60fps_video.mp4 -o 60fps_video_and_audio.mp4 -ovc copy -oac copy
-%cd%\ffmpeg\ffmpeg.exe -i 60fps_video.mp4 -i 60fps_audio.wav -c:v copy -c:a copy -shortest 60fps_video_and_audio.mp4 -loglevel fatal
+%cd%\ffmpeg\ffmpeg.exe -y -i 60fps_video.mp4 -i 60fps_audio.aac -c:v copy -c:a copy 60fps.mp4 
 
 rem del %cd%\60fps_video.mp4
 rem del 60fps_audio.wav

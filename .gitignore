@@ -12,6 +12,7 @@ scripts/work.avs
 *.mkv
 *.divx
 *.xvid
+*.aac
 *.ffindex
 *.zip
 *.7z

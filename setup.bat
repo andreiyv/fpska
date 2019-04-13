@@ -12,12 +12,12 @@ rem del %~dp0\FFMS2\ffms2-2.22-msvc.7z
 rem rmdir /S/Q %~dp0\FFMS2\ffms2-2.22-msvc
 
 rem Mencoder
-%~dp0distr\curl.exe https://kent.dl.sourceforge.net/project/mplayerwin/MPlayer-MEncoder/r38119/mplayer-svn-38119.7z --output %~dp0\mencoder\mplayer-svn-38119.7z
-%~dp0distr\7za.exe x %~dp0\mencoder\mplayer-svn-38119.7z -o%~dp0\mencoder
-copy %~dp0\mencoder\mplayer-svn-38119\*.exe %~dp0\mencoder
-copy %~dp0\mencoder\mplayer-svn-38119\*.dll %~dp0\mencoder
-del %~dp0\mencoder\mplayer-svn-38119.7z
-rmdir /S/Q %~dp0\mencoder\mplayer-svn-38119
+rem %~dp0distr\curl.exe https://kent.dl.sourceforge.net/project/mplayerwin/MPlayer-MEncoder/r38119/mplayer-svn-38119.7z --output %~dp0\mencoder\mplayer-svn-38119.7z
+rem %~dp0distr\7za.exe x %~dp0\mencoder\mplayer-svn-38119.7z -o%~dp0\mencoder
+rem copy %~dp0\mencoder\mplayer-svn-38119\*.exe %~dp0\mencoder
+rem copy %~dp0\mencoder\mplayer-svn-38119\*.dll %~dp0\mencoder
+rem del %~dp0\mencoder\mplayer-svn-38119.7z
+rem rmdir /S/Q %~dp0\mencoder\mplayer-svn-38119
 
 rem FFmpeg
 %~dp0distr\curl.exe https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.zip --output %~dp0\ffmpeg\ffmpeg-latest-win32-static.zip
