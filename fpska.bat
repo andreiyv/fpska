@@ -1,12 +1,16 @@
 @echo off &setlocal
 setlocal enabledelayedexpansion
 
-set ffmpeg_threads=1
-
 if [%1]==[] (
 echo Vvedite imya video
 exit
 )
+
+rem ============= init =============================
+set ffmpeg_threads=1
+set method=slow
+set ncpu=2
+rem =================================================
 
 echo "full video path: " %~f1
 echo "video extension: " %~x1
@@ -14,21 +18,21 @@ echo "video extension: " %~x1
 set video_file=%~f1
 echo "video_file: " !video_file!
 
-rem if "%~x1"==".MTS" (
-rem echo "this is mts video need to convert"
-rem %cd%\mencoder\mencoder !video_file! -demuxer lavf -oac copy -ovc copy -of lavf=mp4 -o %cd%\mtsvideo.mp4
-rem set video_file=mtsvideo.mp4
-rem )
+rem ========== Convert MTS to MP4 ===================
+if "%~x1"==".MTS" (
+echo "this is mts video need to convert"
+%cd%\ffmpeg\ffmpeg.exe -i !video_file! -c:v copy -c:a aac -b:a 320k mtsvideo.mp4 -hide_banner
+set video_file=mtsvideo.mp4
+)
 
-rem if "%~x1"==".mts" (
-rem echo "this is mts video need to convert"
-rem %cd%\mencoder\mencoder !video_file! -demuxer lavf -oac copy -ovc copy -of lavf=mp4 -o %cd%\mtsvideo.mp4
-rem set video_file=mtsvideo.mp4
-rem )
+if "%~x1"==".mts" (
+echo "this is mts video need to convert"
+%cd%\ffmpeg\ffmpeg.exe -i !video_file! -c:v copy -c:a aac -b:a 320k mtsvideo.mp4 -hide_banner
+set video_file=mtsvideo.mp4
+)
+rem =================================================
 
-set method=slow
-set ncpu=2
-
+rem ===================== set nethod ================
 if [%2]==[] (
 set method=slow
 ) else (
@@ -43,32 +47,15 @@ set ncpu=%3
 
 echo "ncpu: " !ncpu!
 echo "1 method: " !method!
-if exist %cd%\svpflow\svpflow1.dll (
-    rem file exists
-) else (
-    echo "---------------------------"
-    echo Net biblioteki svpflow1.dll
-    echo svpflow\readme.txt - instruktsiya po ustanovke
-    echo "---------------------------"
-    exit /B
-)
 
-if exist %cd%\svpflow\svpflow2.dll (
-    rem file exists
-) else (
-    echo "---------------------------"
-    echo Net biblioteki svpflow2.dll
-    echo svpflow\readme.txt - instruktsiya po ustanovke
-    echo "---------------------------"
-    exit /B
-)
+rem =================================================
+
 @echo off
 
 echo %time%
 
 rem extract audio
-rem %cd%\mencoder\mplayer.exe -vc dummy -vo null -ao pcm:file=60fps_audio.wav,fast %1 -msglevel all=0
-%cd%\ffmpeg\ffmpeg.exe -y -i %1 -vn -acodec copy 60fps_audio.aac
+%cd%\ffmpeg\ffmpeg.exe -y -i %1 -vn -acodec copy 60fps_audio.aac -v quiet -stats 
 
 rem prepare script
 if "!method!"=="slow" (
@@ -103,12 +90,10 @@ echo "3 method: " !method!
 rem convert to 60fps video
 if "!method!"=="slow" (
 echo "slow"
-rem %cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryslow:bitrate=14000:threads=auto -o %cd%\60fps_video.mp4
-%cd%\ffmpeg\ffmpeg.exe -y -i %cd%\scripts\work.avs -c:a copy -c:v libx264 -crf 20 -preset slow %cd%\60fps_video.mp4
+%cd%\ffmpeg\ffmpeg.exe -y -i %cd%\scripts\work.avs -c:a copy -c:v libx264 -crf 20 -preset slow %cd%\60fps_video.mp4 -v quiet -stats
 ) else if "!method!"=="fast" (
 echo "fast"
-rem %cd%\mencoder\mencoder.exe %cd%\scripts\work.avs -oac copy -ovc x264 -x264encopts preset=veryfast -o %cd%\60fps_video.mp4
-%cd%\ffmpeg\ffmpeg.exe -y -i %cd%\scripts\work.avs -c:a copy -c:v libx264 -crf 20 -preset slow %cd%\60fps_video.mp4
+%cd%\ffmpeg\ffmpeg.exe -y -i %cd%\scripts\work.avs -c:a copy -c:v libx264 -crf 20 -preset slow %cd%\60fps_video.mp4 -v quiet -stats
 )
 
 rem del %cd%\scripts\work.avs
@@ -116,14 +101,8 @@ rem del *.ffindex
 
 rem merge audio and 60fps video
 rem %cd%\mencoder\mencoder.exe -audiofile 60fps_audio.wav 60fps_video.mp4 -o 60fps_video_and_audio.mp4 -ovc copy -oac copy
-%cd%\ffmpeg\ffmpeg.exe -y -i 60fps_video.mp4 -i 60fps_audio.aac -c:v copy -c:a copy 60fps.mp4 
+%cd%\ffmpeg\ffmpeg.exe -y -i 60fps_video.mp4 -i 60fps_audio.aac -c:v copy -c:a copy 60fps.mp4 -v quiet -stats
 
-rem del %cd%\60fps_video.mp4
-rem del 60fps_audio.wav
-rem ren 60fps_video_and_audio.mp4 60fps.mp4
-
-rem mplayer -vo null -ao null -identify -frames 0 /path/to/file
-rem mencoder\mencoder video.MTS -demuxer lavf -oac copy -ovc copy -of lavf=mp4 -o mtsvideo.mp4
 endlocal
 echo %time%
 pause
