@@ -129,8 +129,18 @@ rem del %cd%\scripts\work.avs
 rem del *.ffindex
 
 rem =========== merge audio and 60fps video =========
-%cd%\ffmpeg\ffmpeg.exe -y -i %cd%\tmp\60fps_video.mp4 -i %cd%\tmp\60fps_audio.aac -c:v copy -c:a copy 60fps.mp4 -v quiet -stats
+rem %cd%\ffmpeg\ffmpeg.exe -y -i %cd%\tmp\60fps_video.mp4 -i %cd%\tmp\60fps_audio.aac -c:v copy -c:a copy 60fps.mp4 -v quiet -stats
+
+for %%i in (tmp\*.*) do set str=!str! "%%i"
+echo !str!
+
+%cd%\mkvtoolnix\mkvmerge.exe !str! -o 60fps.mkv
+
 rem =================================================
+
+del %cd%\log.txt
+del %cd%\ffprobe.log
+del %cd%\*.ffindex
 
 endlocal
 echo %time%

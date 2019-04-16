@@ -3,6 +3,11 @@ mencoder/*.exe
 mencoder/*.dll
 svpflow/*.dll
 scripts/work.avs
+eac3to/*.exe
+eac3to/*.dll
+eac3to/*.wav
+eac3to/legal*
+mkvtoolnix/
 60fps.mp4
 60fps_audio.wav
 60fps_video.mp4
