@@ -16,6 +16,13 @@ set method=slow
 set ncpu=2
 rem =================================================
 
+FOR %%i IN ("%~f1") DO (
+ECHO filedrive=%%~di
+ECHO filepath=%%~pi
+set video_file_name=%%~ni
+ECHO fileextension=%%~xi
+)
+
 echo File:  %~f1
 echo Extension:  %~x1
 
@@ -48,24 +55,10 @@ echo container: !container!
 echo audio: !audio_codeck!
 
 rem =================================================
-rem
-rem ========== Convert MTS to MP4 ===================
-if "%~x1"==".MTS" (
-echo "this is mts video need to convert"
-%cd%\ffmpeg\ffmpeg.exe -i !video_file! -c:v copy -c:a aac -b:a 320k mtsvideo.mp4 -hide_banner
-set video_file=mtsvideo.mp4
-)
-
-if "%~x1"==".mts" (
-echo "this is mts video need to convert"
-%cd%\ffmpeg\ffmpeg.exe -i !video_file! -c:v copy -c:a aac -b:a 320k mtsvideo.mp4 -hide_banner
-set video_file=mtsvideo.mp4
-)
-rem =================================================
 
 rem ===================== set nethod ================
 if [%2]==[] (
-set method=slow
+set method=fast
 ) else (
 set method=%2
 )
@@ -80,6 +73,7 @@ echo Method: !method!
 
 rem =================================================
 
+rmdir /S/Q %cd%\tmp
 mkdir %cd%\tmp
 
 @echo off
@@ -91,6 +85,25 @@ if "!container!"=="mp4" (
 echo Extrating audio for mp4	
 %cd%\ffmpeg\ffmpeg.exe -y -i %1 -vn -acodec copy %cd%\tmp\60fps_audio.aac -v quiet -stats 
 )
+
+
+if "!container!"=="mkv" (
+
+copy !video_file! %cd%\tmp
+cd %cd%\tmp
+
+
+
+%cd%\eac3to\eac3to.exe %cd%\tmp\!video_file_name!!video_ext! -demux
+
+del %cd%\tmp\!video_file_name!!video_ext! 
+del %cd%\tmp\*.txt
+del %cd%\tmp\*.h264
+
+cd %cd%
+
+)
+
 rem =================================================
 
 rem ============== prepare script ===================
