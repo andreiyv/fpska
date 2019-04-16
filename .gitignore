@@ -18,3 +18,5 @@ scripts/work.avs
 *.ffindex
 *.zip
 *.7z
+*.log
+*.txt
