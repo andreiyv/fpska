@@ -75,8 +75,8 @@ echo Method: !method!
 
 rem =================================================
 
-rmdir /S/Q "!fpska_home!\tmp"
-mkdir "!fpska_home!\tmp"
+rmdir /S/Q "!fpska_home!tmp"
+mkdir "!fpska_home!tmp"
 
 @echo off
 
@@ -85,7 +85,7 @@ echo %time%
 rem ============== extract audio ====================
 if "!container!"=="mp4" (
 echo Extrating audio for mp4	
-"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i %1 -vn -acodec copy "!fpska_home!\tmp\60fps_audio.aac" -v quiet -stats 
+"!fpska_home!ffmpeg\ffmpeg.exe" -y -i %1 -vn -acodec copy "!fpska_home!\tmp\60fps_audio.aac" -v quiet -stats 
 )
 
 
@@ -96,7 +96,7 @@ cd "!fpska_home!\tmp"
 
 
 
-"!fpska_home!\eac3to\eac3to.exe" "!fpska_home!\tmp\!video_file_name!!video_ext!" -demux
+"!fpska_home!eac3to\eac3to.exe" "!fpska_home!\tmp\!video_file_name!!video_ext!" -demux
 
 del "!fpska_home!\tmp\!video_file_name!!video_ext!" 
 del "!fpska_home!\tmp\*.txt"
@@ -110,9 +110,9 @@ rem =================================================
 
 rem ============== prepare script ===================
 if "!method!"=="slow" (
-copy !fpska_home!\scripts\fpska_slow.avs !fpska_home!\scripts\work.avs
+copy "!fpska_home!\scripts\fpska_slow.avs" "!fpska_home!\scripts\work.avs"
 ) else if "!method!"=="fast" (
-copy !fpska_home!\scripts\fpska_fast.avs !fpska_home!\scripts\work.avs
+copy "!fpska_home!\scripts\fpska_fast.avs" "!fpska_home!\scripts\work.avs"
 )
 set "search=fullhd.mkv"
 set "search_threads=nthreads"
@@ -128,23 +128,23 @@ set "newfile=!fpska_home!\scripts\tmp.txt"
     set "line=!line:%search_threads%=%threads%!"
     echo(!line!
 ))>"%newfile%"
-del !fpska_home!\scripts\work.avs
-ren !fpska_home!\scripts\tmp.txt work.avs
+del "!fpska_home!\scripts\work.avs"
+ren "!fpska_home!\scripts\tmp.txt" "work.avs"
 rem =================================================
 rem
 rem =========== convert to 60fps video ==============
 if "!method!"=="slow" (
-!fpska_home!\ffmpeg\ffmpeg.exe -y -i !fpska_home!\scripts\work.avs -c:a copy -c:v libx264 -crf 20 -preset slow !fpska_home!\tmp\60fps_video.mp4 -v quiet -stats
+"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!\tmp\60fps_video.mp4" -v quiet -stats
 ) else if "!method!"=="fast" (
-!fpska_home!\ffmpeg\ffmpeg.exe -y -i !fpska_home!\scripts\work.avs -c:a copy -c:v libx264 -crf 20 -preset slow !fpska_home!\tmp\60fps_video.mp4 -v quiet -stats
+"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!\tmp\60fps_video.mp4" -v quiet -stats
 )
 rem =================================================
 
 rem =========== merge audio and 60fps video =========
 for %%i in (tmp\*.*) do set str=!str! "%%i"
-echo !str!
+rem echo !str!
 
-!fpska_home!\mkvtoolnix\mkvmerge.exe !str! -o 60fps.mkv
+"!fpska_home!\mkvtoolnix\mkvmerge.exe" !str! -o !video_file!_fpska_60fps.mkv
 
 rem =================================================
 
