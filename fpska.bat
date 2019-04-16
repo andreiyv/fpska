@@ -116,8 +116,8 @@ pause
 
 :Info_Message
 echo ------------------------------------------
-echo  
+echo . 
 echo %~1
-echo  
+echo . 
 echo ------------------------------------------
 EXIT /B 0
