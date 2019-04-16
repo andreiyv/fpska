@@ -1,6 +1,10 @@
 @echo off &setlocal
 setlocal enabledelayedexpansion
 
+cls
+
+CALL :Info_Message "fpska v0.5"
+
 if [%1]==[] (
 echo Vvedite imya video
 exit
@@ -54,8 +58,9 @@ rem =================================================
 
 echo %time%
 
-rem extract audio
+rem ============== extract audio ====================
 %cd%\ffmpeg\ffmpeg.exe -y -i %1 -vn -acodec copy 60fps_audio.aac -v quiet -stats 
+rem =================================================
 
 rem prepare script
 if "!method!"=="slow" (
@@ -87,7 +92,7 @@ ren %cd%\scripts\tmp.txt work.avs
 
 echo "3 method: " !method!
 
-rem convert to 60fps video
+rem =========== convert to 60fps video =============
 if "!method!"=="slow" (
 echo "slow"
 %cd%\ffmpeg\ffmpeg.exe -y -i %cd%\scripts\work.avs -c:a copy -c:v libx264 -crf 20 -preset slow %cd%\60fps_video.mp4 -v quiet -stats
@@ -95,15 +100,24 @@ echo "slow"
 echo "fast"
 %cd%\ffmpeg\ffmpeg.exe -y -i %cd%\scripts\work.avs -c:a copy -c:v libx264 -crf 20 -preset slow %cd%\60fps_video.mp4 -v quiet -stats
 )
+rem =================================================
 
 rem del %cd%\scripts\work.avs
 rem del *.ffindex
 
-rem merge audio and 60fps video
-rem %cd%\mencoder\mencoder.exe -audiofile 60fps_audio.wav 60fps_video.mp4 -o 60fps_video_and_audio.mp4 -ovc copy -oac copy
+rem =========== merge audio and 60fps video =========
 %cd%\ffmpeg\ffmpeg.exe -y -i 60fps_video.mp4 -i 60fps_audio.aac -c:v copy -c:a copy 60fps.mp4 -v quiet -stats
+rem =================================================
 
 endlocal
 echo %time%
 pause
 
+
+:Info_Message
+echo ------------------------------------------
+echo  
+echo %~1
+echo  
+echo ------------------------------------------
+EXIT /B 0

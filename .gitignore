@@ -8,6 +8,7 @@ scripts/work.avs
 60fps_video.mp4
 60fps_video_and_audio.mp4
 *.avi
+*.h264
 *.mov
 *.mkv
 *.divx

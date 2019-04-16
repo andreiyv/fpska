@@ -34,4 +34,12 @@ copy %~dp0svpflow\svpflow-4.2.0.142\lib-windows\avisynth\x32\*.dll %~dp0svpflow
 del %~dp0svpflow\svpflow-4.2.0.142.zip
 rmdir /S/Q %~dp0svpflow\svpflow-4.2.0.142
 
+rem eac3to
+%~dp0distr\curl.exe https://www.videohelp.com/download/eac3to334.zip --output %~dp0\eac3to\eac3to334.zip 
+%~dp0distr\7za.exe x %~dp0\eac3to\eac3to334.zip
+del %~dp0\eac3to\eac3to334.zip
+
+rem mkvtoolnix
+https://download.fosshub.com/Protected/expiretime=1555383126;badurl=aHR0cHM6Ly93d3cuZm9zc2h1Yi5jb20vTUtWVG9vbE5peC5odG1s/79437068bd8b1e845f190ab288728b94d619d76429fb262585d33049b1deacac/5b8f889d59eee027c3d78aab/5cb43029735d24df2a37e542/mkvtoolnix-32-bit-33.1.0.7z
+
 PAUSE
