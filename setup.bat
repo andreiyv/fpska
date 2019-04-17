@@ -1,3 +1,5 @@
+@echo off &setlocal
+
 rem AviSynth
 %~dp0distr\AviSynth_260.exe /S
 copy %~dp0distr\avisynth.dll c:\Windows\SysWOW64
@@ -24,13 +26,11 @@ rem eac3to
 del %~dp0\eac3to\eac3to334.zip
 
 rem mkvtoolnix
-%~dp0distr\curl.exe https://andreyv.ru/distrib/mkvtoolnix-32-bit-33.1.0.7z --output %~dp0\mkvtoolnix-32-bit-33.1.0.7z
-rem timeout 3 > NUL
-%~dp0distr\7za.exe -aoa -y x %~dp0\mkvtoolnix-32-bit-33.1.0.7z
-timeout 3 > NUL
-del %~dp0\mkvtoolnix-32-bit-33.1.0.7z
+%~dp0distr\curl.exe https://andreyv.ru/distrib/mkvtoolnix.zip --output %~dp0\mkvtoolnix.zip
+%~dp0distr\7za.exe -aoa x %~dp0\mkvtoolnix.zip -o%~dp0\mkvtoolnix
+del %~dp0\mkvtoolnix.zip
 
 rem mountains.mp4
-%~dp0distr\curl.exe https://andreyv.ru/distrib/mountains.mp4 --output %~dp0\mountains.mp4
+rem %~dp0distr\curl.exe https://andreyv.ru/distrib/mountains.mp4 --output %~dp0\mountains.mp4
 
 PAUSE
