@@ -108,6 +108,7 @@ cd "!fpska_home!\tmp"
 del "!fpska_home!\tmp\!video_file_name!!video_ext!" 
 del "!fpska_home!\tmp\*.txt"
 del "!fpska_home!\tmp\*.h264"
+del "!fpska_home!\tmp\*.vc1"
 
 cd "!fpska_home!"
 
@@ -125,6 +126,7 @@ cd "!fpska_home!\tmp"
 del "!fpska_home!\tmp\!video_file_name!!video_ext!" 
 del "!fpska_home!\tmp\*.txt"
 del "!fpska_home!\tmp\*.h264"
+del "!fpska_home!\tmp\*.vc1"
 
 cd "!fpska_home!"
 
