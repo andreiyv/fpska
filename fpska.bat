@@ -44,6 +44,10 @@ if %errorlevel%==0 (
 	set audio_codeck=aac
 )
 
+findstr /m "Audio: mp3" "!fpska_home!ffprobe.log"
+if %errorlevel%==0 (
+	set audio_codeck=mp3
+)
 findstr /m "matroska" "!fpska_home!ffprobe.log"
 if %errorlevel%==0 (
 	set container=mkv
@@ -58,6 +62,12 @@ findstr /m "mpegts" "!fpska_home!ffprobe.log"
 if %errorlevel%==0 (
 	set container=mpegts
 )
+
+findstr /m "avi, from" "!fpska_home!ffprobe.log"
+if %errorlevel%==0 (
+	set container=avi
+)
+
 echo container: !container!
 echo audio: !audio_codeck!
 rem =================================================
@@ -96,6 +106,12 @@ if "!container!"=="mp4" (
 )
 )
 
+if "!container!"=="avi" (
+ CALL :Info_Message "Extracting audio from avi container using ffmpeg"
+ if "!audio_codeck!"=="mp3" ( 
+"!fpska_home!ffmpeg\ffmpeg.exe" -y -i !video_file! -vn -acodec copy "!fpska_home!\tmp\60fps_audio.mp3" -v quiet -stats 
+)
+)
 
 if "!container!"=="mkv" (
 
