@@ -15,25 +15,25 @@ set fpska_home=%~dp0
 set ffmpeg_threads=1
 set method=slow
 set ncpu=2
+set container=""
+set audio_codeck=""
+set video_file=%~f1
+set video_ext=%~x1
 rem =================================================
 
 
 FOR %%i IN ("%~f1") DO (
-ECHO filedrive=%%~di
-ECHO filepath=%%~pi
+rem ECHO filedrive=%%~di
+rem ECHO filepath=%%~pi
 set video_file_name=%%~ni
-ECHO fileextension=%%~xi
+rem ECHO fileextension=%%~xi
 )
 
 echo Fpska home: !fpska_home! 
-echo File:  %~f1
-echo Extension:  %~x1
+echo File:  !video_file! 
+echo Extension:  !video_ext!
 
-set video_file=%~f1
-set video_ext=%~x1
 
-set container=""
-set audio_codeck=""
 
 rem ============= get info =========================
 
@@ -54,6 +54,10 @@ if %errorlevel%==0 (
 	set container=mp4
 )
 
+findstr /m "mpegts" "!fpska_home!ffprobe.log"
+if %errorlevel%==0 (
+	set container=mpegts
+)
 echo container: !container!
 echo audio: !audio_codeck!
 rem =================================================
@@ -80,21 +84,24 @@ mkdir "!fpska_home!tmp"
 
 @echo off
 
+
+CALL :Info_Message "script started at"
 echo %time%
 
 rem ============== extract audio ====================
 if "!container!"=="mp4" (
-echo Extrating audio for mp4	
+ CALL :Info_Message "Extracting audio from mp4 container using ffmpeg"
+ if "!audio_codeck!"=="aac" ( 
 "!fpska_home!ffmpeg\ffmpeg.exe" -y -i %1 -vn -acodec copy "!fpska_home!\tmp\60fps_audio.aac" -v quiet -stats 
+)
 )
 
 
 if "!container!"=="mkv" (
 
+ CALL :Info_Message "Extracting audio from mkv container using eac3to"
 copy "!video_file!" "!fpska_home!\tmp"
 cd "!fpska_home!\tmp"
-
-
 
 "!fpska_home!eac3to\eac3to.exe" "!fpska_home!\tmp\!video_file_name!!video_ext!" -demux
 
@@ -106,9 +113,28 @@ cd "!fpska_home!"
 
 )
 
+
+if "!container!"=="mpegts" (
+
+ CALL :Info_Message "Extracting audio from mpegts container using eac3to"
+copy "!video_file!" "!fpska_home!\tmp"
+cd "!fpska_home!\tmp"
+
+"!fpska_home!eac3to\eac3to.exe" "!fpska_home!\tmp\!video_file_name!!video_ext!" -demux
+
+del "!fpska_home!\tmp\!video_file_name!!video_ext!" 
+del "!fpska_home!\tmp\*.txt"
+del "!fpska_home!\tmp\*.h264"
+
+cd "!fpska_home!"
+
+)
+
+
 rem =================================================
 
 rem ============== prepare script ===================
+CALL :Info_Message "Create Avisynth script from template"
 if "!method!"=="slow" (
 copy "!fpska_home!\scripts\fpska_slow.avs" "!fpska_home!\scripts\work.avs"
 ) else if "!method!"=="fast" (
@@ -133,26 +159,29 @@ ren "!fpska_home!\scripts\tmp.txt" "work.avs"
 rem =================================================
 rem
 rem =========== convert to 60fps video ==============
+CALL :Info_Message "Creating 60-fps video"
 if "!method!"=="slow" (
 "!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!\tmp\60fps_video.mp4" -v quiet -stats
 ) else if "!method!"=="fast" (
-"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!\tmp\60fps_video.mp4" -v quiet -stats
+"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 28 -preset fast "!fpska_home!\tmp\60fps_video.mp4" -v quiet -stats
 )
 rem =================================================
 
 rem =========== merge audio and 60fps video =========
-for %%i in (tmp\*.*) do set str=!str! "%%i"
+CALL :Info_Message "Creating resulting mkv"
+for %%i in ("!fpska_home!tmp\*.*") do set str=!str! "%%i"
 rem echo !str!
 
-"!fpska_home!\mkvtoolnix\mkvmerge.exe" !str! -o !video_file!_fpska_60fps.mkv
+"!fpska_home!\mkvtoolnix\mkvmerge.exe" !str! -o "!video_file!_fpska_60fps.mkv"
 
 rem =================================================
 
 del !fpska_home!\log.txt
 del !fpska_home!\ffprobe.log
-del !fpska_home!\*.ffindex
+rem del !fpska_home!\*.ffindex
 
 endlocal
+CALL :Info_Message "script finished at"
 echo %time%
 pause
 

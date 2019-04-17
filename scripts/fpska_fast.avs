@@ -10,7 +10,7 @@ ConvertToYV12()
 
 super_params="{pel:1,gpu:0}"
 
-analyse_params="""{block:{w:32,h:32}, 
+analyse_params="""{block:{w:16,h:16}, 
 	main:{search:{coarse:{distance:0}}},
 	refine:[{thsad:200}]}"""
 
