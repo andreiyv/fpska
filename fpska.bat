@@ -5,11 +5,6 @@ cls
 
 CALL :Info_Message "fpska v0.5"
 
-if [%1]==[] (
-echo Vvedite imya video
-exit
-)
-
 rem ============= init =============================
 set fpska_home=%~dp0
 set ffmpeg_threads=1
@@ -17,8 +12,8 @@ set method=slow
 set ncpu=2
 set container=""
 set audio_codeck=""
-set video_file=%~f1
-set video_ext=%~x1
+set video_file=%~f2
+set video_ext=%~x2
 rem =================================================
 
 
@@ -34,6 +29,11 @@ echo File:  !video_file!
 echo Extension:  !video_ext!
 
 
+if [!video_file!]==[] (
+echo Vvedite imya video
+pause
+exit
+)
 
 rem ============= get info =========================
 
@@ -63,10 +63,10 @@ echo audio: !audio_codeck!
 rem =================================================
 
 rem ===================== set nethod ================
-if [%2]==[] (
+if [%1]==[] (
 set method=fast
 ) else (
-set method=%2
+set method=%1
 )
 
 if [%3]==[] (
@@ -92,7 +92,7 @@ rem ============== extract audio ====================
 if "!container!"=="mp4" (
  CALL :Info_Message "Extracting audio from mp4 container using ffmpeg"
  if "!audio_codeck!"=="aac" ( 
-"!fpska_home!ffmpeg\ffmpeg.exe" -y -i %1 -vn -acodec copy "!fpska_home!\tmp\60fps_audio.aac" -v quiet -stats 
+"!fpska_home!ffmpeg\ffmpeg.exe" -y -i !video_file! -vn -acodec copy "!fpska_home!\tmp\60fps_audio.aac" -v quiet -stats 
 )
 )
 
