@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 cls
 
 CALL :Info_Message "fpska v0.5"
-
+CALL :Check_Install
 rem ============= init =============================
 set fpska_home=%~dp0
 set ffmpeg_threads=1
@@ -221,3 +221,30 @@ echo.
 echo --------------------------------------------------------
 EXIT /B 0
 
+:Check_Install
+set not_installed=0
+if not exist "!fpska_home!eac3to\eac3to.exe" (
+	echo eac3to not installed, please run setup.bat as Administrator
+	set not_installed=1
+)
+
+if not exist "!fpska_home!ffmpeg\ffmpeg.exe" (
+	echo ffmpeg not installed, please run setup.bat as Administrator
+	set not_installed=1
+)
+
+if not exist "!fpska_home!mkvtoolnix\mkvmerge.exe" (
+	echo mkvtoolnix not installed, please run setup.bat as Administrator
+	set not_installed=1
+)
+
+if not exist "!fpska_home!svpflow\svpflow1.dll" (
+	echo svpflow not installed, please run setup.bat as Administrator
+	set not_installed=1
+)
+
+if "!not_installed!"=="1" (
+pause
+exit
+)
+EXIT /B 0
