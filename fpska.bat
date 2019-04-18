@@ -39,12 +39,12 @@ rem ============= get info =========================
 
 "!fpska_home!\ffmpeg\ffprobe.exe" -i "!video_file!" > "!fpska_home!\log.txt" 2> "!fpska_home!\ffprobe.log"
 
-findstr /m "aac" "!fpska_home!ffprobe.log"
+findstr /m /c:"Audio: aac" "!fpska_home!ffprobe.log"
 if %errorlevel%==0 (
 	set audio_codeck=aac
 )
 
-findstr /m "Audio: mp3" "!fpska_home!ffprobe.log"
+findstr /m /c:"Audio: mp3" "!fpska_home!ffprobe.log"
 if %errorlevel%==0 (
 	set audio_codeck=mp3
 )
@@ -53,17 +53,22 @@ if %errorlevel%==0 (
 	set container=mkv
 )
 
-findstr /m "mov,mp4,m4a,3gp,3g2,mj2" "!fpska_home!ffprobe.log"
+findstr /m /c:"Video: h264" "!fpska_home!ffprobe.log"
 if %errorlevel%==0 (
 	set container=mp4
 )
 
-findstr /m "mpegts" "!fpska_home!ffprobe.log"
+findstr /m /c:"mov,mp4,m4a,3gp,3g2,mj2" "!fpska_home!ffprobe.log"
+if %errorlevel%==0 (
+	set container=mp4
+)
+
+findstr /m /c:"mpegts" "!fpska_home!ffprobe.log"
 if %errorlevel%==0 (
 	set container=mpegts
 )
 
-findstr /m "avi, from" "!fpska_home!ffprobe.log"
+findstr /m /c:"avi," "!fpska_home!ffprobe.log"
 if %errorlevel%==0 (
 	set container=avi
 )
@@ -155,6 +160,8 @@ rem ============== prepare script ===================
 CALL :Info_Message "Create Avisynth script from template"
 if "!method!"=="slow" (
 copy "!fpska_home!\scripts\fpska_slow.avs" "!fpska_home!\scripts\work.avs"
+) else if "!method!"=="medium" (
+copy "!fpska_home!\scripts\fpska_medium.avs" "!fpska_home!\scripts\work.avs"
 ) else if "!method!"=="fast" (
 copy "!fpska_home!\scripts\fpska_fast.avs" "!fpska_home!\scripts\work.avs"
 )
@@ -180,6 +187,8 @@ rem =========== convert to 60fps video ==============
 CALL :Info_Message "Creating 60-fps video"
 if "!method!"=="slow" (
 "!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!\tmp\60fps_video.mp4" -v quiet -stats
+) else if "!method!"=="medium" (
+"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 24 -preset slow "!fpska_home!\tmp\60fps_video.mp4" -v quiet -stats
 ) else if "!method!"=="fast" (
 "!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 28 -preset fast "!fpska_home!\tmp\60fps_video.mp4" -v quiet -stats
 )
@@ -211,3 +220,4 @@ echo %~1
 echo. 
 echo --------------------------------------------------------
 EXIT /B 0
+

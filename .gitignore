@@ -3,10 +3,19 @@ mencoder/*.exe
 mencoder/*.dll
 svpflow/*.dll
 scripts/work.avs
+eac3to/changelog.txt
+eac3to/license.txt
 eac3to/*.exe
 eac3to/*.dll
 eac3to/*.wav
 eac3to/legal*
+mkvtoolnix/*.exe
+mkvtoolnix/*.dll
+mkvtoolnix/data
+mkvtoolnix/doc
+mkvtoolnix/examples
+mkvtoolnix/locale
+mkvtoolnix/share
 60fps.mp4
 60fps_audio.wav
 60fps_video.mp4
@@ -23,4 +32,5 @@ eac3to/legal*
 *.zip
 *.7z
 *.log
-*.txt
+*.url
+
