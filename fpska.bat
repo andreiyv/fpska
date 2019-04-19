@@ -50,8 +50,6 @@ set ncpu=%3
 
 echo Метод конвертации в 50/60fps: !method!
 
-rem =================================================
-
 
 if [!video_file!]==[] (
 echo Вы забыли указать имя файла
@@ -62,10 +60,9 @@ exit
 
 CALL :Check_Install
 
-rem ============= get info =========================
 echo --------------------------------------------------------
-echo Извлекаем информацию о видео и аудио кодеках из видеофайла
-"!fpska_home!\ffmpeg\ffprobe.exe" -i "!video_file!" 1> NUL 2> "!fpska_home!\ffprobe.log"
+echo [Шаг 1/5] Извлекаем информацию о видео и аудио кодеках из видеофайла
+"!fpska_home!\ffmpeg\ffprobe.exe" -i "!video_file!" 1> NUL 2> "!fpska_home!ffprobe.log"
 if %errorlevel%==0 (
 	echo Информация извлечена успешно в файл "!fpska_home!\ffprobe.log"
 	echo.
@@ -113,7 +110,7 @@ echo Информация о видеофайле:
 echo Контейнер исходного видеофайла: !container!
 echo Звуковая дорожка в формате: !audio_codeck!
 echo.
-echo --------------------------------------------------------
+rem echo --------------------------------------------------------
 
 
 rmdir /S/Q "!fpska_home!tmp"
@@ -122,11 +119,11 @@ mkdir "!fpska_home!tmp"
 @echo off
 
 
-CALL :Info_Message "script started at"
+echo Время начала кодирования
 echo %time%
+echo.
 
-rem ============== extract audio ====================
-echo "Извлекаем звуковую дорожку из исходного видеофайла"
+echo [Шаг 2/5] Извлекаем звуковую дорожку из исходного видеофайла
 if "!container!"=="mp4" (
  if "!audio_codeck!"=="aac" ( 
 "!fpska_home!ffmpeg\ffmpeg.exe" -y -i !video_file! -vn -acodec copy "!fpska_home!\tmp\60fps_audio.aac" -v quiet
@@ -176,16 +173,15 @@ if %errorlevel%==0 (
 	exit
 )
 
-rem =================================================
 
-rem ============== prepare script ===================
-CALL :Info_Message "Create Avisynth script from template"
+echo [Шаг 3/5] Создаем скрипт для Avisynth из шаблона
+
 if "!method!"=="slow" (
-copy "!fpska_home!\scripts\fpska_slow.avs" "!fpska_home!\scripts\work.avs"
+copy "!fpska_home!\scripts\fpska_slow.avs" "!fpska_home!\scripts\work.avs" >NUL
 ) else if "!method!"=="medium" (
-copy "!fpska_home!\scripts\fpska_medium.avs" "!fpska_home!\scripts\work.avs"
+copy "!fpska_home!\scripts\fpska_medium.avs" "!fpska_home!\scripts\work.avs" >NUL
 ) else if "!method!"=="fast" (
-copy "!fpska_home!\scripts\fpska_fast.avs" "!fpska_home!\scripts\work.avs"
+copy "!fpska_home!\scripts\fpska_fast.avs" "!fpska_home!\scripts\work.avs" >NUL
 )
 set "search=fullhd.mkv"
 set "search_threads=nthreads"
@@ -203,35 +199,58 @@ set "newfile=!fpska_home!\scripts\tmp.txt"
 ))>"%newfile%"
 del "!fpska_home!\scripts\work.avs"
 ren "!fpska_home!\scripts\tmp.txt" "work.avs"
-rem =================================================
-rem
-rem =========== convert to 60fps video ==============
-CALL :Info_Message "Creating 60-fps video"
-if "!method!"=="slow" (
-"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!\tmp\60fps_video.mp4" -v quiet -stats
-) else if "!method!"=="medium" (
-"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 24 -preset slow "!fpska_home!\tmp\60fps_video.mp4" -v quiet -stats
-) else if "!method!"=="fast" (
-"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 28 -preset fast "!fpska_home!\tmp\60fps_video.mp4" -v quiet -stats
+
+if exist "!fpska_home!scripts\work.avs" (
+	echo Скрипт для Avisynth создан успешно
+	echo.
+) else (
+	echo Ошибка создания Avisynth скрипта
+	pause
+	exit
 )
-rem =================================================
 
-rem =========== merge audio and 60fps video =========
-CALL :Info_Message "Creating resulting mkv"
+echo [Шаг 4/5] Создаем видео с частотой 50/60fps
+if "!method!"=="slow" (
+"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
+) else if "!method!"=="medium" (
+"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 24 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
+) else if "!method!"=="fast" (
+"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 28 -preset fast "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
+)
+
+echo.
+
+if %errorlevel%==0 (
+	echo видео с частотой 50/60fps cоздано успешно "!fpska_home!tmp\60fps_video.mp4"
+	echo.
+) else (
+	echo Ошибка создания видео с частотой 50/60fps
+	pause
+	exit
+)
+
+echo [Шаг 5/5] Склеиваем видео и звуковую дорожки
 for %%i in ("!fpska_home!tmp\*.*") do set str=!str! "%%i"
-rem echo !str!
 
-"!fpska_home!\mkvtoolnix\mkvmerge.exe" !str! -o "!video_file!_fpska_60fps.mkv"
+"!fpska_home!\mkvtoolnix\mkvmerge.exe" !str! -o "!video_file!_fpska_60fps.mkv" >NUL
+if %errorlevel%==0 (
+	echo видео и звуковая дорожки объеденены успешно
+	echo.
+) else (
+	echo Ошибка при объединении видео и звуковой дорожки
+	pause
+	exit
+)
 
-rem =================================================
-
-del !fpska_home!\log.txt
-del !fpska_home!\ffprobe.log
-rem del !fpska_home!\*.ffindex
+del !fpska_home!\ffprobe.log >NUL
 
 endlocal
-CALL :Info_Message "script finished at"
+echo Преобразование исходного видео в формат 50/60fps закончено
 echo %time%
+echo.
+echo --------------------------------------------------------
+echo.
+echo Видеофайл в формате 50/60fps: !video_file!_fpska_60fps.mkv
 pause
 
 
