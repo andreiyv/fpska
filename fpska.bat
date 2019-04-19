@@ -4,15 +4,8 @@ setlocal enabledelayedexpansion
 
 cls
 
-(set \n=^
-%=Do not remove this line=%
-)
-
-rem echo Line1!\n!Line2
-
 CALL :Info_Message "fpska v0.5 - скрипт для конвертации в 50/60 FPS"
 
-rem ============= init =============================
 set fpska_home=%~dp0
 set ffmpeg_threads=1
 set method=slow
@@ -21,23 +14,13 @@ set container=""
 set audio_codeck=""
 set video_file=%~f2
 set video_ext=%~x2
-rem =================================================
-
-rem FOR %%i IN ("%~f1") DO (
-rem ECHO filedrive=%%~di
-rem ECHO filepath=%%~pi
 set video_file_name=%~n2
-rem ECHO fileextension=%%~xi
-)
 
 echo Fpska домашняя папка: !fpska_home!
 echo.
 echo Полный путь к файлу:  !video_file!
 echo.
-echo Имя файла: !video_file_name!
-echo.
 
-rem ===================== set nethod ================
 if [%1]==[] (
 set method=fast
 ) else (
@@ -51,25 +34,34 @@ set ncpu=%3
 )
 
 echo Метод конвертации в 50/60fps: !method!
-
+echo.
 
 if [!video_file!]==[] (
-echo Вы забыли указать имя файла
-echo.
-pause
-exit
+	echo Вы забыли указать имя файла
+	echo.
+	pause
+	exit
 )
 
 CALL :Check_Install
+echo.
+
+echo Время начала кодирования
+echo %time%
+echo.
 
 echo --------------------------------------------------------
 echo [Шаг 1/5] Извлекаем информацию о видео и аудио кодеках из видеофайла
-"!fpska_home!\ffmpeg\ffprobe.exe" -i "!video_file!" 1> NUL 2> "!fpska_home!ffprobe.log"
+"!fpska_home!ffmpeg\ffprobe.exe" -i "!video_file!" 1>NUL 2> "!fpska_home!ffprobe.log"
+
 if %errorlevel%==0 (
-	echo Информация извлечена успешно в файл "!fpska_home!\ffprobe.log"
+	echo Информация извлечена успешно в файл "!fpska_home!ffprobe.log"
 	echo.
 ) else (
 	echo Ошибка извлечения информации
+	echo Проверьте есть ли в имени видеофайла пробелы, русские буквы, скобки, 
+	echo восклицательные знаки и т.д. В настоящей версии они не поддерживаются
+	echo Переименуйте пожалуйста исходный видеофайл
 	pause
 	exit
 )
@@ -108,22 +100,14 @@ if %errorlevel%==0 (
 	set container=avi
 )
 
-echo Информация о видеофайле:
-echo Контейнер исходного видеофайла: !container!
-echo Звуковая дорожка в формате: !audio_codeck!
-echo.
-rem echo --------------------------------------------------------
-
+rem echo Информация о видеофайле:
+rem echo Контейнер исходного видеофайла: !container!
+rem echo Звуковая дорожка в формате: !audio_codeck!
 
 rmdir /S/Q "!fpska_home!tmp"
 mkdir "!fpska_home!tmp"
 
 @echo off
-
-
-echo Время начала кодирования
-echo %time%
-echo.
 
 echo [Шаг 2/5] Извлекаем звуковую дорожку из исходного видеофайла
 if "!container!"=="mp4" (
@@ -220,8 +204,6 @@ if "!method!"=="slow" (
 "!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 28 -preset fast "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
 )
 
-echo.
-
 if %errorlevel%==0 (
 	echo видео с частотой 50/60fps cоздано успешно "!fpska_home!tmp\60fps_video.mp4"
 	echo.
@@ -231,8 +213,12 @@ if %errorlevel%==0 (
 	exit
 )
 
+echo.
+
 echo [Шаг 5/5] Склеиваем видео и звуковую дорожки
 for %%i in ("!fpska_home!tmp\*.*") do set str=!str! "%%i"
+
+echo mkvmerge: !str!
 
 "!fpska_home!\mkvtoolnix\mkvmerge.exe" !str! -o "!video_file!_fpska_60fps.mkv" >NUL
 if %errorlevel%==0 (
