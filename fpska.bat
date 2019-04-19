@@ -23,16 +23,18 @@ set video_file=%~f2
 set video_ext=%~x2
 rem =================================================
 
-FOR %%i IN ("%~f1") DO (
+rem FOR %%i IN ("%~f1") DO (
 rem ECHO filedrive=%%~di
 rem ECHO filepath=%%~pi
-set video_file_name=%%~ni
+set video_file_name=%~n2
 rem ECHO fileextension=%%~xi
 )
 
 echo Fpska домашняя папка: !fpska_home!
 echo.
-echo Полный путь к файлу:  !video_file! 
+echo Полный путь к файлу:  !video_file!
+echo.
+echo Имя файла: !video_file_name!
 echo.
 
 rem ===================== set nethod ================
@@ -86,10 +88,10 @@ if %errorlevel%==0 (
 	set container=mkv
 )
 
-findstr /m /c:"Video: h264" "!fpska_home!ffprobe.log" >NUL
-if %errorlevel%==0 (
-	set container=mp4
-)
+rem findstr /m /c:"Video: h264" "!fpska_home!ffprobe.log" >NUL
+rem if %errorlevel%==0 (
+rem 	set container=mp4
+rem )
 
 findstr /m /c:"mov,mp4,m4a,3gp,3g2,mj2" "!fpska_home!ffprobe.log" >NUL
 if %errorlevel%==0 (
@@ -137,28 +139,28 @@ if "!container!"=="avi" (
 )
 
 if "!container!"=="mkv" (
-copy "!video_file!" "!fpska_home!\tmp"
-cd "!fpska_home!\tmp"
+copy "!video_file!" "!fpska_home!\tmp" >NUL
+cd "!fpska_home!\tmp" >NUL
 
-"!fpska_home!eac3to\eac3to.exe" "!fpska_home!\tmp\!video_file_name!!video_ext!" -demux
-del "!fpska_home!\tmp\!video_file_name!!video_ext!" 
-del "!fpska_home!\tmp\*.txt"
-del "!fpska_home!\tmp\*.h264"
-del "!fpska_home!\tmp\*.vc1"
+"!fpska_home!eac3to\eac3to.exe" "!fpska_home!tmp\!video_file_name!!video_ext!" -demux >NUL
+del "!fpska_home!\tmp\!video_file_name!!video_ext!" >NUL
+del "!fpska_home!\tmp\*.txt" >NUL 2>NUL
+del "!fpska_home!\tmp\*.h264" >NUL 2>NUL
+del "!fpska_home!\tmp\*.vc1" >NUL 2>NUL
 
 cd "!fpska_home!"
 
 )
 
 if "!container!"=="mpegts" (
-copy "!video_file!" "!fpska_home!\tmp"
+copy "!video_file!" "!fpska_home!\tmp" >NUL
 cd "!fpska_home!\tmp"
 
-"!fpska_home!eac3to\eac3to.exe" "!fpska_home!\tmp\!video_file_name!!video_ext!" -demux
+"!fpska_home!eac3to\eac3to.exe" "!fpska_home!\tmp\!video_file_name!!video_ext!" -demux >NUL
 del "!fpska_home!\tmp\!video_file_name!!video_ext!" 
-del "!fpska_home!\tmp\*.txt"
-del "!fpska_home!\tmp\*.h264"
-del "!fpska_home!\tmp\*.vc1"
+del "!fpska_home!\tmp\*.txt" >NUL 2>NUL
+del "!fpska_home!\tmp\*.h264" >NUL 2>NUL
+del "!fpska_home!\tmp\*.vc1" >NUL 2>NUL
 
 cd "!fpska_home!"
 
@@ -244,13 +246,16 @@ if %errorlevel%==0 (
 
 del !fpska_home!\ffprobe.log >NUL
 
-endlocal
 echo Преобразование исходного видео в формат 50/60fps закончено
 echo %time%
 echo.
 echo --------------------------------------------------------
 echo.
-echo Видеофайл в формате 50/60fps: !video_file!_fpska_60fps.mkv
+echo Видеофайл в формате 50/60fps: "!video_file!_fpska_60fps.mkv"
+echo.
+
+endlocal
+
 pause
 
 
