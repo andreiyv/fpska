@@ -12,6 +12,7 @@ set method=slow
 set ncpu=2
 set container=""
 set audio_codeck=""
+set audio_pcm=0
 set video_file=%~f2
 set video_ext=%~x2
 set video_file_name=%~n2
@@ -75,6 +76,12 @@ findstr /m /c:"Audio: mp3" "!fpska_home!ffprobe.log" >NUL
 if %errorlevel%==0 (
 	set audio_codeck=mp3
 )
+
+findstr /m /c:"Audio: pcm_" "!fpska_home!ffprobe.log" >NUL
+if %errorlevel%==0 (
+	set audio_pcm=1
+)
+
 findstr /m "matroska" "!fpska_home!ffprobe.log" >NUL
 if %errorlevel%==0 (
 	set container=mkv
@@ -98,6 +105,10 @@ if %errorlevel%==0 (
 findstr /m /c:"avi," "!fpska_home!ffprobe.log" >NUL
 if %errorlevel%==0 (
 	set container=avi
+)
+
+if "!audio_pcm!"=="1" (
+CALL :PCM_Warning
 )
 
 rem echo Информация о видеофайле:
@@ -216,29 +227,41 @@ if %errorlevel%==0 (
 echo.
 
 echo [Шаг 5/5] Склеиваем видео и звуковую дорожки
-for %%i in ("!fpska_home!tmp\*.*") do set str=!str! "%%i"
+if "!audio_pcm!"=="0" (
+	for %%i in ("!fpska_home!tmp\*.*") do set str=!str! "%%i"
 
-echo mkvmerge: !str!
+rem 	echo mkvmerge: !str!
 
-"!fpska_home!\mkvtoolnix\mkvmerge.exe" !str! -o "!video_file!_fpska_60fps.mkv" >NUL
-if %errorlevel%==0 (
-	echo видео и звуковая дорожки объеденены успешно
+	"!fpska_home!\mkvtoolnix\mkvmerge.exe" !str! -o "!video_file!_fpska_60fps.mkv" >NUL
+	
+	if %errorlevel%==0 (
+		echo видео и звуковая дорожки объеденены успешно
+		echo.
+	) else (
+		echo Ошибка при объединении видео и звуковой дорожки
+		pause
+		exit
+	)
+
+	del !fpska_home!\ffprobe.log >NUL
+
+	echo Преобразование исходного видео в формат 50/60fps закончено
+	echo %time%
 	echo.
-) else (
-	echo Ошибка при объединении видео и звуковой дорожки
-	pause
-	exit
+	echo --------------------------------------------------------
+	echo.
+	echo Видеофайл в формате 50/60fps: "!video_file!_fpska_60fps.mkv"
+	echo.
+	
+) else if "!audio_pcm!"=="1" (
+	echo Так как в видеофайле содержится звуковая дорожка в формате PCM,
+	echo то финальная склейка видео и аудио дорожек не была проведена.
+	echo Вы сможете сделать это самостоятельно. Все файлы находятся в директории tmp.
+	echo.
+	echo Преобразование исходного видео в формат 50/60fps закончено
+	echo %time%
+	echo.
 )
-
-del !fpska_home!\ffprobe.log >NUL
-
-echo Преобразование исходного видео в формат 50/60fps закончено
-echo %time%
-echo.
-echo --------------------------------------------------------
-echo.
-echo Видеофайл в формате 50/60fps: "!video_file!_fpska_60fps.mkv"
-echo.
 
 endlocal
 
@@ -283,3 +306,13 @@ if "!not_installed!"=="1" (
 )
 
 EXIT /B 0
+
+:PCM_Warning
+	echo Внимание^^! В видеофайле содержится звуковая дорожка в формате PCM.
+	echo В настоящее время fpsk'а не может обрабатывать такой тип audio.
+	echo Поэтому будет сделано преобразование в 60fps для видеодорожки,
+	echo но финальная склейка 60fps video и audio производится не будет.
+	echo Все файлы будут находиться в папке tmp.
+	echo.
+EXIT /B 0
+

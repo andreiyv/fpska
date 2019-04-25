@@ -9,6 +9,7 @@ eac3to/*.exe
 eac3to/*.dll
 eac3to/*.wav
 eac3to/legal*
+eac3to/log.txt
 mkvtoolnix/*.exe
 mkvtoolnix/*.dll
 mkvtoolnix/data
