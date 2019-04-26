@@ -17,6 +17,7 @@ mkvtoolnix/doc
 mkvtoolnix/examples
 mkvtoolnix/locale
 mkvtoolnix/share
+python/
 tmp/
 60fps.mp4
 60fps_audio.wav

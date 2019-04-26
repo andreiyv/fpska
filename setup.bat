@@ -1,9 +1,9 @@
 @echo off &setlocal
 
 rem AviSynth
-%~dp0distr\AviSynth_260.exe /S
-copy %~dp0distr\avisynth.dll c:\Windows\SysWOW64
-copy %~dp0distr\avisynth.dll c:\Windows\System32
+rem %~dp0distr\AviSynth_260.exe /S
+rem copy %~dp0distr\avisynth.dll c:\Windows\SysWOW64
+rem copy %~dp0distr\avisynth.dll c:\Windows\System32
 
 rem FFmpeg
 %~dp0distr\curl.exe https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.zip --output %~dp0\ffmpeg\ffmpeg-latest-win32-static.zip
@@ -11,6 +11,11 @@ rem FFmpeg
 copy %~dp0\ffmpeg\ffmpeg-latest-win32-static\bin\*.exe %~dp0ffmpeg
 del %~dp0ffmpeg\ffmpeg-latest-win32-static.zip
 rmdir /S/Q %~dp0ffmpeg\ffmpeg-latest-win32-static
+
+rem python
+%~dp0distr\curl.exe https://andreyv.ru/distrib/python.zip --output %~dp0\python.zip
+%~dp0distr\7za.exe -aoa x %~dp0\python.zip -o%~dp0\
+del %~dp0\python.zip
 
 
 rem SVPflow
