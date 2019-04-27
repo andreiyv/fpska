@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 
 cls
 
-CALL :Info_Message "fpska v0.5 - скрипт для конвертации в 50/60 FPS"
+CALL :Info_Message "fpska v0.6 - скрипт для конвертации в 50/60 FPS"
 
 set fpska_home=%~dp0
 set ffmpeg_threads=1
@@ -53,7 +53,7 @@ echo.
 
 echo --------------------------------------------------------
 echo [Шаг 1/5] Извлекаем информацию о видео и аудио кодеках из видеофайла
-"!fpska_home!ffmpeg\ffprobe.exe" -i "!video_file!" 1>NUL 2> "!fpska_home!ffprobe.log"
+"!fpska_home!ffmpeg\bin\ffprobe.exe" -i "!video_file!" 1>NUL 2> "!fpska_home!ffprobe.log"
 
 if %errorlevel%==0 (
 	echo Информация извлечена успешно в файл "!fpska_home!ffprobe.log"
@@ -111,9 +111,7 @@ if "!audio_pcm!"=="1" (
 CALL :PCM_Warning
 )
 
-rem echo Информация о видеофайле:
-rem echo Контейнер исходного видеофайла: !container!
-rem echo Звуковая дорожка в формате: !audio_codeck!
+
 
 rmdir /S/Q "!fpska_home!tmp"
 mkdir "!fpska_home!tmp"
@@ -123,13 +121,13 @@ mkdir "!fpska_home!tmp"
 echo [Шаг 2/5] Извлекаем звуковую дорожку из исходного видеофайла
 if "!container!"=="mp4" (
  if "!audio_codeck!"=="aac" ( 
-"!fpska_home!ffmpeg\ffmpeg.exe" -y -i !video_file! -vn -acodec copy "!fpska_home!\tmp\60fps_audio.aac" -v quiet
+"!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i !video_file! -vn -acodec copy "!fpska_home!\tmp\60fps_audio.aac" -v quiet
 )
 )
 
 if "!container!"=="avi" (
  if "!audio_codeck!"=="mp3" ( 
-"!fpska_home!ffmpeg\ffmpeg.exe" -y -i !video_file! -vn -acodec copy "!fpska_home!\tmp\60fps_audio.mp3" -v quiet
+"!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i !video_file! -vn -acodec copy "!fpska_home!\tmp\60fps_audio.mp3" -v quiet
 )
 )
 
@@ -171,21 +169,21 @@ if %errorlevel%==0 (
 )
 
 
-echo [Шаг 3/5] Создаем скрипт для Avisynth из шаблона
+echo [Шаг 3/5] Создаем скрипт для Vapoursynth из шаблона
 
 if "!method!"=="slow" (
-copy "!fpska_home!\scripts\fpska_slow.avs" "!fpska_home!\scripts\work.avs" >NUL
+copy "!fpska_home!\scripts\fpska_slow.pvy" "!fpska_home!\scripts\work.pvy" >NUL
 ) else if "!method!"=="medium" (
-copy "!fpska_home!\scripts\fpska_medium.avs" "!fpska_home!\scripts\work.avs" >NUL
+copy "!fpska_home!\scripts\fpska_medium.pvy" "!fpska_home!\scripts\work.pvy" >NUL
 ) else if "!method!"=="fast" (
-copy "!fpska_home!\scripts\fpska_fast.avs" "!fpska_home!\scripts\work.avs" >NUL
+copy "!fpska_home!\scripts\fpska_fast.pvy" "!fpska_home!\scripts\work.pvy" >NUL
 )
 set "search=fullhd.mkv"
 set "search_threads=nthreads"
 set "replace=!video_file!"
 set "threads=!ncpu!"
 
-set "textfile=!fpska_home!\scripts\work.avs"
+set "textfile=!fpska_home!\scripts\work.pvy"
 set "newfile=!fpska_home!\scripts\tmp.txt"
 
 (for /f "delims=" %%i in (%textfile%) do (
@@ -194,25 +192,25 @@ set "newfile=!fpska_home!\scripts\tmp.txt"
     set "line=!line:%search_threads%=%threads%!"
     echo(!line!
 ))>"%newfile%"
-del "!fpska_home!\scripts\work.avs"
-ren "!fpska_home!\scripts\tmp.txt" "work.avs"
+del "!fpska_home!\scripts\work.pvy"
+ren "!fpska_home!\scripts\tmp.txt" "work.pvy"
 
-if exist "!fpska_home!scripts\work.avs" (
-	echo Скрипт для Avisynth создан успешно
+if exist "!fpska_home!scripts\work.pvy" (
+	echo Скрипт для Vapoursynth создан успешно
 	echo.
 ) else (
-	echo Ошибка создания Avisynth скрипта
+	echo Ошибка создания Vapoursynth скрипта
 	pause
 	exit
 )
 
 echo [Шаг 4/5] Создаем видео с частотой 50/60fps
 if "!method!"=="slow" (
-"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
+"!fpska_home!\python\VSPipe.exe" --y4m "!fpska_home!\scripts\work.pvy" "-" | "!fpska_home!\ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
 ) else if "!method!"=="medium" (
-"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 24 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
+"!fpska_home!\python\VSPipe.exe" --y4m "!fpska_home!\scripts\work.pvy" "-" | "!fpska_home!\ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
 ) else if "!method!"=="fast" (
-"!fpska_home!\ffmpeg\ffmpeg.exe" -y -i "!fpska_home!\scripts\work.avs" -c:a copy -c:v libx264 -crf 28 -preset fast "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
+"!fpska_home!\python\VSPipe.exe" --y4m "!fpska_home!\scripts\work.pvy" "-" | "!fpska_home!\ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 28 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
 )
 
 if %errorlevel%==0 (
@@ -281,22 +279,22 @@ EXIT /B 0
 set not_installed=0
 
 if not exist "!fpska_home!eac3to\eac3to.exe" (
-	echo eac3to не установлена, запустите setup.bat от Administrator
+	echo eac3to не установлена, запустите setup.bat
 	set not_installed=1
 )
 
-if not exist "!fpska_home!ffmpeg\ffmpeg.exe" (
-	echo ffmpeg не установлен, запустите setup.bat от Administrator
+if not exist "!fpska_home!ffmpeg\bin\ffmpeg.exe" (
+	echo ffmpeg не установлен, запустите setup.bat
 	set not_installed=1
 )
 
 if not exist "!fpska_home!mkvtoolnix\mkvmerge.exe" (
-	echo mkvtoolnix не установлены, запустите setup.bat от Administrator
+	echo mkvtoolnix не установлены, запустите setup.bat
 	set not_installed=1
 )
 
-if not exist "!fpska_home!svpflow\svpflow1.dll" (
-	echo svpflow не установлена, запустите setup.bat от Administrator
+if not exist "!fpska_home!python\vapoursynth64\plugins\svpflow1_vs64.dll" (
+	echo svpflow не установлена, запустите setup.bat
 	set not_installed=1
 )
 
