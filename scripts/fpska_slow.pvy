@@ -4,7 +4,7 @@ core = vs.get_core(threads=nthreads)
 clip = core.ffms2.Source(source=r"fullhd.mkv")
 clip = clip.resize.Bicubic(format=vs.YUV420P8)
 
-super_params='{"gpu":0}'
+super_params='{"pel":2,"gpu":0}'
 analyse_params="""{vectors:3,block:{block:{w:16}, refine:[{thsad:1000}],overlap:2},
         levels:3,
 	main:{search:{type:4,sort:true,distance:32,satd:true,coarse:{type:4,distance:32},trymany:true},bad:{sad:1000,range:-32}},
