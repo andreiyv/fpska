@@ -1,9 +1,9 @@
 @echo off &setlocal
 setlocal enabledelayedexpansion
 
-echo %1
+set video_file=%~f1
 
-%~dp0\fpska.bat fast "%1"
+%~dp0\fpska.bat fast "!video_file!"
 
 endlocal
 

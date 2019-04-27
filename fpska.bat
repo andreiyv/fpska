@@ -13,14 +13,28 @@ set ncpu=2
 set container=""
 set audio_codeck=""
 set audio_pcm=0
-set video_file=%~f2
-set video_ext=%~x2
-set video_file_name=%~n2
+rem set video_file=%~f2
+set video_file=%~2
+
+rem set video_ext=%~x2
+rem set video_file_name=%~n2
+
+FOR %%i IN ("%video_file%") DO (
+rem ECHO filedrive=%%~di
+rem ECHO filepath=%%~pi
+set video_file_name=%%~ni%%~xi
+set video_ext=%%~xi
+)
+
 
 echo Fpska домашняя папка: !fpska_home!
 echo.
 echo Полный путь к файлу:  !video_file!
 echo.
+rem echo Имя файла: !video_file_name!
+rem echo.
+rem echo Расширение файла: !video_ext!
+rem echo.
 
 if [%1]==[] (
 set method=fast
@@ -121,13 +135,13 @@ mkdir "!fpska_home!tmp"
 echo [Шаг 2/5] Извлекаем звуковую дорожку из исходного видеофайла
 if "!container!"=="mp4" (
  if "!audio_codeck!"=="aac" ( 
-"!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i !video_file! -vn -acodec copy "!fpska_home!\tmp\60fps_audio.aac" -v quiet
+"!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i "!video_file!" -vn -acodec copy "!fpska_home!\tmp\60fps_audio.aac" -v quiet
 )
 )
 
 if "!container!"=="avi" (
  if "!audio_codeck!"=="mp3" ( 
-"!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i !video_file! -vn -acodec copy "!fpska_home!\tmp\60fps_audio.mp3" -v quiet
+"!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i "!video_file!" -vn -acodec copy "!fpska_home!\tmp\60fps_audio.mp3" -v quiet
 )
 )
 
@@ -135,7 +149,7 @@ if "!container!"=="mkv" (
 copy "!video_file!" "!fpska_home!\tmp" >NUL
 cd "!fpska_home!\tmp" >NUL
 
-"!fpska_home!eac3to\eac3to.exe" "!fpska_home!tmp\!video_file_name!!video_ext!" -demux >NUL
+"!fpska_home!eac3to\eac3to.exe" "!fpska_home!tmp\!video_file_name!" -demux >NUL
 del "!fpska_home!\tmp\!video_file_name!!video_ext!" >NUL
 del "!fpska_home!\tmp\*.txt" >NUL 2>NUL
 del "!fpska_home!\tmp\*.h264" >NUL 2>NUL
@@ -210,7 +224,7 @@ if "!method!"=="slow" (
 ) else if "!method!"=="medium" (
 "!fpska_home!\python\VSPipe.exe" --y4m "!fpska_home!\scripts\work.pvy" "-" | "!fpska_home!\ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
 ) else if "!method!"=="fast" (
-"!fpska_home!\python\VSPipe.exe" --y4m "!fpska_home!\scripts\work.pvy" "-" | "!fpska_home!\ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 28 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
+"!fpska_home!\python\VSPipe.exe" --y4m "!fpska_home!\scripts\work.pvy" "-" | "!fpska_home!\ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
 )
 
 if %errorlevel%==0 (
