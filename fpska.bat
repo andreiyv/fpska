@@ -200,14 +200,8 @@ set "threads=!ncpu!"
 set "textfile=!fpska_home!scripts\work.pvy"
 set "newfile=!fpska_home!scripts\tmp.txt"
 
-(for /f "delims=" %%i in (%textfile%) do (
-    set "line=%%i"
-    set "line=!line:%search%=%replace%!"
-    set "line=!line:%search_threads%=%threads%!"
-    echo(!line!
-))>"%newfile%"
-del "!fpska_home!scripts\work.pvy"
-ren "!fpska_home!scripts\tmp.txt" "work.pvy"
+"!fpska_home!python\python.exe" "!fpska_home!scripts\find-and-replace.py" "fullhd.mkv" "!video_file!" "!textfile!" "!fpska_home!scripts\s.txt" 
+"!fpska_home!python\python.exe" "!fpska_home!scripts\find-and-replace.py" "nthreads" "!ncpu!" "!textfile!" "!fpska_home!scripts\s.txt"
 
 if exist "!fpska_home!scripts\work.pvy" (
 	echo Скрипт для Vapoursynth создан успешно
