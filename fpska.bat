@@ -13,15 +13,9 @@ set ncpu=2
 set container=""
 set audio_codeck=""
 set audio_pcm=0
-rem set video_file=%~f2
 set video_file=%~2
 
-rem set video_ext=%~x2
-rem set video_file_name=%~n2
-
 FOR %%i IN ("%video_file%") DO (
-rem ECHO filedrive=%%~di
-rem ECHO filepath=%%~pi
 set video_file_name=%%~ni%%~xi
 set video_ext=%%~xi
 )
@@ -31,10 +25,6 @@ echo Fpska домашняя папка: !fpska_home!
 echo.
 echo Полный путь к файлу:  !video_file!
 echo.
-rem echo Имя файла: !video_file_name!
-rem echo.
-rem echo Расширение файла: !video_ext!
-rem echo.
 
 if [%1]==[] (
 set method=fast
@@ -74,7 +64,7 @@ if %errorlevel%==0 (
 	echo.
 ) else (
 	echo Ошибка извлечения информации
-	echo Проверьте есть ли в имени видеофайла пробелы, русские буквы, скобки, 
+	echo Проверьте есть ли в имени видеофайла русские буквы, скобки, 
 	echo восклицательные знаки и т.д. В настоящей версии они не поддерживаются
 	echo Переименуйте пожалуйста исходный видеофайл
 	pause
@@ -101,10 +91,6 @@ if %errorlevel%==0 (
 	set container=mkv
 )
 
-rem findstr /m /c:"Video: h264" "!fpska_home!ffprobe.log" >NUL
-rem if %errorlevel%==0 (
-rem 	set container=mp4
-rem )
 
 findstr /m /c:"mov,mp4,m4a,3gp,3g2,mj2" "!fpska_home!ffprobe.log" >NUL
 if %errorlevel%==0 (
@@ -236,8 +222,6 @@ echo [Шаг 5/5] Склеиваем видео и звуковую дорожки
 if "!audio_pcm!"=="0" (
 	for %%i in ("!fpska_home!tmp\*.*") do set str=!str! "%%i"
 
-rem 	echo mkvmerge: !str!
-
 	"!fpska_home!mkvtoolnix\mkvmerge.exe" !str! -o "!video_file!_fpska_60fps.mkv" >NUL
 	
 	if %errorlevel%==0 (
@@ -249,7 +233,7 @@ rem 	echo mkvmerge: !str!
 		exit
 	)
 
-	del !fpska_home!ffprobe.log >NUL
+	del "!fpska_home!ffprobe.log" >NUL
 
 	echo Преобразование исходного видео в формат 50/60fps закончено
 	echo %time%
