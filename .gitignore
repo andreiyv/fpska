@@ -4,10 +4,8 @@ eac3to/
 mkvtoolnix/
 python/
 tmp/
-60fps.mp4
-60fps_audio.wav
-60fps_video.mp4
-60fps_video_and_audio.mp4
+gui.bat
+testwx.py
 *.avi
 *.h264
 *.mp4
