@@ -1,10 +1,10 @@
-﻿import os
+import os
 import re
 import sys
 
 
 def find_fps(filename):
-    print("find_fps: ", filename)
+#    print("find_fps: ", filename)
     with open(filename, 'r') as datafile:
 
         fps_in_log_file = None
