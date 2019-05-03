@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 
 cls
 
-CALL :Info_Message "fpska v0.6 - скрипт для конвертации в 50/60 FPS"
+CALL :Info_Message "fpska v0.7 - скрипт для конвертации в 60 fps"
 
 set fpska_home=%~dp0
 set ffmpeg_threads=1
@@ -20,6 +20,8 @@ set video_file_name=%%~ni%%~xi
 set video_ext=%%~xi
 )
 
+rmdir /S/Q "!fpska_home!tmp"
+mkdir "!fpska_home!tmp"
 
 echo Fpska домашняя папка: !fpska_home!
 echo.
@@ -38,7 +40,7 @@ set ncpu=4
 set ncpu=%3
 )
 
-echo Метод конвертации в 50/60fps: !method!
+echo Метод конвертации в 60fps: !method!
 echo.
 
 if [!video_file!]==[] (
@@ -57,10 +59,10 @@ echo.
 
 echo --------------------------------------------------------
 echo [Шаг 1/5] Извлекаем информацию о видео и аудио кодеках из видеофайла
-"!fpska_home!ffmpeg\bin\ffprobe.exe" -i "!video_file!" 1>NUL 2> "!fpska_home!ffprobe.log"
+"!fpska_home!ffmpeg\bin\ffprobe.exe" -i "!video_file!" 1>NUL 2> "!fpska_home!tmp\ffprobe.log"
 
 if %errorlevel%==0 (
-	echo Информация извлечена успешно в файл "!fpska_home!ffprobe.log"
+	echo Информация извлечена успешно в файл "!fpska_home!tmp\ffprobe.log"
 	echo.
 ) else (
 	echo Ошибка извлечения информации
@@ -71,41 +73,57 @@ if %errorlevel%==0 (
 	exit
 )
 
-findstr /m /c:"Audio: aac" "!fpska_home!ffprobe.log" >NUL
+findstr /m /c:"Audio: aac" "!fpska_home!tmp\ffprobe.log" >NUL
 if %errorlevel%==0 (
 	set audio_codeck=aac
 )
 
-findstr /m /c:"Audio: mp3" "!fpska_home!ffprobe.log" >NUL
+findstr /m /c:"Audio: ac3" "!fpska_home!tmp\ffprobe.log" >NUL
+if %errorlevel%==0 (
+	set audio_codeck=ac3
+)
+
+findstr /m /c:"Audio: mp3" "!fpska_home!tmp\ffprobe.log" >NUL
 if %errorlevel%==0 (
 	set audio_codeck=mp3
 )
 
-findstr /m /c:"Audio: pcm_" "!fpska_home!ffprobe.log" >NUL
+findstr /m /c:"Audio: wmav" "!fpska_home!tmp\ffprobe.log" >NUL
+if %errorlevel%==0 (
+	set audio_codeck=wmav
+)
+
+findstr /m /c:"Audio: pcm_" "!fpska_home!tmp\ffprobe.log" >NUL
 if %errorlevel%==0 (
 	set audio_pcm=1
 )
 
-findstr /m "matroska" "!fpska_home!ffprobe.log" >NUL
+findstr /m "matroska" "!fpska_home!tmp\ffprobe.log" >NUL
 if %errorlevel%==0 (
 	set container=mkv
 )
 
 
-findstr /m /c:"mov,mp4,m4a,3gp,3g2,mj2" "!fpska_home!ffprobe.log" >NUL
+findstr /m /c:"mov,mp4,m4a,3gp,3g2,mj2" "!fpska_home!tmp\ffprobe.log" >NUL
 if %errorlevel%==0 (
 	set container=mp4
 )
 
-findstr /m /c:"mpegts" "!fpska_home!ffprobe.log" >NUL
+findstr /m /c:"mpegts" "!fpska_home!tmp\ffprobe.log" >NUL
 if %errorlevel%==0 (
 	set container=mpegts
 )
 
-findstr /m /c:"avi," "!fpska_home!ffprobe.log" >NUL
+findstr /m /c:"avi," "!fpska_home!tmp\ffprobe.log" >NUL
 if %errorlevel%==0 (
 	set container=avi
 )
+
+findstr /m /c:"Video: mpeg2video" "!fpska_home!tmp\ffprobe.log" >NUL
+if %errorlevel%==0 (
+	set container=mpeg2
+)
+
 
 if "!audio_pcm!"=="1" (
 CALL :PCM_Warning
@@ -113,8 +131,6 @@ CALL :PCM_Warning
 
 
 
-rmdir /S/Q "!fpska_home!tmp"
-mkdir "!fpska_home!tmp"
 
 @echo off
 
@@ -122,6 +138,16 @@ echo [Шаг 2/5] Извлекаем звуковую дорожку из исходного видеофайла
 if "!container!"=="mp4" (
  if "!audio_codeck!"=="aac" ( 
 "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i "!video_file!" -vn -acodec copy "!fpska_home!tmp\60fps_audio.aac" -v quiet
+)
+)
+
+if "!audio_codeck!"=="wmav" ( 
+"!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i "!video_file!" -vn -acodec copy "!fpska_home!tmp\60fps_audio.wma" -v quiet
+)
+
+if "!container!"=="mpeg2" (
+ if "!audio_codeck!"=="ac3" ( 
+"!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i "!video_file!" -vn -acodec copy "!fpska_home!tmp\60fps_audio.ac3" -v quiet
 )
 )
 
@@ -189,6 +215,8 @@ set "newfile=!fpska_home!scripts\tmp.txt"
 "!fpska_home!python\python.exe" "!fpska_home!scripts\find-and-replace.py" "fullhd.mkv" "!video_file!" "!textfile!" "!fpska_home!scripts\s.txt" 
 "!fpska_home!python\python.exe" "!fpska_home!scripts\find-and-replace.py" "nthreads" "!ncpu!" "!textfile!" "!fpska_home!scripts\s.txt"
 
+"!fpska_home!python\python.exe" "!fpska_home!scripts\setfps.py" "!fpska_home!tmp\ffprobe.log" "!textfile!" "!fpska_home!scripts\s.txt"
+
 if exist "!fpska_home!scripts\work.pvy" (
 	echo Скрипт для Vapoursynth создан успешно
 	echo.
@@ -198,7 +226,7 @@ if exist "!fpska_home!scripts\work.pvy" (
 	exit
 )
 
-echo [Шаг 4/5] Создаем видео с частотой 50/60fps
+echo [Шаг 4/5] Создаем видео с частотой 60fps
 if "!method!"=="slow" (
 "!fpska_home!python\VSPipe.exe" --y4m "!fpska_home!scripts\work.pvy" "-" | "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
 ) else if "!method!"=="medium" (
@@ -208,10 +236,10 @@ if "!method!"=="slow" (
 )
 
 if %errorlevel%==0 (
-	echo видео с частотой 50/60fps cоздано успешно "!fpska_home!tmp\60fps_video.mp4"
+	echo видео с частотой 60fps cоздано успешно "!fpska_home!tmp\60fps_video.mp4"
 	echo.
 ) else (
-	echo Ошибка создания видео с частотой 50/60fps
+	echo Ошибка создания видео с частотой 60fps
 	pause
 	exit
 )
@@ -219,11 +247,14 @@ if %errorlevel%==0 (
 echo.
 
 echo [Шаг 5/5] Склеиваем видео и звуковую дорожки
+
+del "!fpska_home!tmp\*.log" >NUL 2>NUL
+
 if "!audio_pcm!"=="0" (
 	for %%i in ("!fpska_home!tmp\*.*") do set str=!str! "%%i"
 
-	"!fpska_home!mkvtoolnix\mkvmerge.exe" !str! -o "!video_file!_fpska_60fps.mkv" >NUL
-	
+"!fpska_home!mkvtoolnix\mkvmerge.exe" !str! -o "!video_file!_fpska_60fps.mkv" >NUL
+
 	if %errorlevel%==0 (
 		echo видео и звуковая дорожки объеденены успешно
 		echo.
@@ -233,14 +264,14 @@ if "!audio_pcm!"=="0" (
 		exit
 	)
 
-	del "!fpska_home!ffprobe.log" >NUL
+rem 	del "!fpska_home!ffprobe.log" >NUL
 
-	echo Преобразование исходного видео в формат 50/60fps закончено
+	echo Преобразование исходного видео в формат 60fps закончено
 	echo %time%
 	echo.
 	echo --------------------------------------------------------
 	echo.
-	echo Видеофайл в формате 50/60fps: "!video_file!_fpska_60fps.mkv"
+	echo Видеофайл в формате 60fps: "!video_file!_fpska_60fps.mkv"
 	echo.
 	
 ) else if "!audio_pcm!"=="1" (
@@ -248,7 +279,7 @@ if "!audio_pcm!"=="0" (
 	echo то финальная склейка видео и аудио дорожек не была проведена.
 	echo Вы сможете сделать это самостоятельно. Все файлы находятся в директории tmp.
 	echo.
-	echo Преобразование исходного видео в формат 50/60fps закончено
+	echo Преобразование исходного видео в формат 60fps закончено
 	echo %time%
 	echo.
 )

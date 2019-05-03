@@ -3,6 +3,7 @@ scripts/work.pvy
 eac3to/
 mkvtoolnix/
 python/
+scripts/setfps
 tmp/
 gui.bat
 testwx.py

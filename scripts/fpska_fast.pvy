@@ -8,7 +8,7 @@ super_params='{"gpu":0}'
 analyse_params="""{block:{w:32,h:32}, 
 	main:{search:{coarse:{distance:0}}},
 	refine:[{thsad:200}]}"""
-smoothfps_params='{"rate":{"num":2,"den":1,"algo":1}}'
+smoothfps_params='{"rate":{"num":vnm,"den":vdn,"algo":1}}'
 
 super  = core.svp1.Super(clip,super_params)
 vectors= core.svp1.Analyse(super["clip"],super["data"],clip,analyse_params)
