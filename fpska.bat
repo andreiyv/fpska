@@ -267,6 +267,8 @@ if "!audio_pcm!"=="0" (
 
 rem 	del "!fpska_home!ffprobe.log" >NUL
 
+	del "!video_file!.ffindex" >NUL
+
 	echo Преобразование исходного видео в формат 60fps закончено
 	echo %time%
 	echo.
