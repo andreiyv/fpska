@@ -65,4 +65,16 @@ echo.
 
 
 
+echo -----------------------------------------------------------------
+echo Download Mediainfo CLI
+echo -----------------------------------------------------------------
+if exist "%~dp0mkvtoolnix" (
+rmdir /S/Q Mediainfo
+)
+"%~dp0distr\curl.exe" https://mediaarea.net/download/binary/mediainfo/19.04/MediaInfo_CLI_19.04_Windows_x64.zip --output "%~dp0MediaInfo_CLI_19.04_Windows_x64.zip"
+"%~dp0distr\7za.exe" -aoa x "%~dp0MediaInfo_CLI_19.04_Windows_x64.zip" -o"%~dp0Mediainfo_CLI"
+del "%~dp0MediaInfo_CLI_19.04_Windows_x64.zip"
+echo.
+
+
 PAUSE

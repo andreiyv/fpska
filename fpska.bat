@@ -215,7 +215,7 @@ set "newfile=!fpska_home!scripts\tmp.txt"
 "!fpska_home!python\python.exe" "!fpska_home!scripts\find-and-replace.py" "fullhd.mkv" "!video_file!" "!textfile!" "!fpska_home!scripts\s.txt" 
 "!fpska_home!python\python.exe" "!fpska_home!scripts\find-and-replace.py" "nthreads" "!ncpu!" "!textfile!" "!fpska_home!scripts\s.txt"
 
-"!fpska_home!python\python.exe" "!fpska_home!scripts\setfps.py" "!fpska_home!tmp\ffprobe.log" "!textfile!" "!fpska_home!scripts\s.txt"
+"!fpska_home!python\python.exe" "!fpska_home!scripts\setfps.py" "!fpska_home!tmp\ffprobe.log" "!textfile!" "!fpska_home!scripts\s.txt" "!fpska_home!Mediainfo_CLI\MediaInfo.exe" "!video_file!"
 
 if exist "!fpska_home!scripts\work.pvy" (
 	echo Скрипт для Vapoursynth создан успешно
@@ -227,6 +227,7 @@ if exist "!fpska_home!scripts\work.pvy" (
 )
 
 echo [Шаг 4/5] Создаем видео с частотой 60fps
+echo Текущее количество сконвертированных кадров (frame):
 if "!method!"=="slow" (
 "!fpska_home!python\VSPipe.exe" --y4m "!fpska_home!scripts\work.pvy" "-" | "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
 ) else if "!method!"=="medium" (

@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+from subprocess import Popen, PIPE
 
 
 def find_fps(filename):
@@ -71,3 +72,18 @@ try:
 except WindowsError:
     os.remove(sys.argv[2])
     os.rename(sys.argv[3], sys.argv[2])
+
+
+#MediaInfo.exe "--Inform=Video;%FrameCount%" avengersageofultron-tlr2_h480p.mov
+
+varg = '''--Inform=Video;%%FrameCount%%'''
+process = Popen([sys.argv[4], varg, sys.argv[5]], stdout=PIPE)
+(output, err) = process.communicate()
+exit_code = process.wait()
+nframes=re.sub('[^0-9]', '', str(output))
+print("\nЧастота кадров в исходном видео: ", fps, "fps")
+print("Количество кадров в исходном видео: ", nframes)
+
+#print("Коэффициенты преобразования в 60 fps (num, den): ", num, den)
+
+print("Количество кадров в 60 fps видео (примерно): ", int(int(nframes)*num/den), "\n")
