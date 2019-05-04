@@ -175,7 +175,7 @@ if "!container!"=="mpegts" (
 copy "!video_file!" "!fpska_home!tmp" >NUL
 cd "!fpska_home!tmp"
 
-"!fpska_home!eac3to\eac3to.exe" "!fpska_home!tmp\!video_file_name!!video_ext!" -demux >NUL
+"!fpska_home!eac3to\eac3to.exe" "!fpska_home!tmp\!video_file_name!" -demux >NUL
 del "!fpska_home!tmp\!video_file_name!" >NUL
 del "!fpska_home!tmp\*.txt" >NUL 2>NUL
 del "!fpska_home!tmp\*.h264" >NUL 2>NUL
