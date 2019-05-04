@@ -88,6 +88,11 @@ if %errorlevel%==0 (
 	set audio_codeck=mp3
 )
 
+findstr /m /c:"Audio: mp2" "!fpska_home!tmp\ffprobe.log" >NUL
+if %errorlevel%==0 (
+	set audio_codeck=mp2
+)
+
 findstr /m /c:"Audio: wmav" "!fpska_home!tmp\ffprobe.log" >NUL
 if %errorlevel%==0 (
 	set audio_codeck=wmav
@@ -105,6 +110,11 @@ if %errorlevel%==0 (
 
 
 findstr /m /c:"mov,mp4,m4a,3gp,3g2,mj2" "!fpska_home!tmp\ffprobe.log" >NUL
+if %errorlevel%==0 (
+	set container=mp4
+)
+
+findstr /m /c:", mpeg, " "!fpska_home!tmp\ffprobe.log" >NUL
 if %errorlevel%==0 (
 	set container=mp4
 )
@@ -138,6 +148,12 @@ echo [Шаг 2/5] Извлекаем звуковую дорожку из исходного видеофайла
 if "!container!"=="mp4" (
  if "!audio_codeck!"=="aac" ( 
 "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i "!video_file!" -vn -acodec copy "!fpska_home!tmp\60fps_audio.aac" -v quiet
+)
+)
+
+if "!container!"=="mp4" (
+ if "!audio_codeck!"=="mp2" ( 
+"!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i "!video_file!" -vn -acodec copy "!fpska_home!tmp\60fps_audio.mp2" -v quiet
 )
 )
 
@@ -289,7 +305,8 @@ rem 	del "!fpska_home!ffprobe.log" >NUL
 
 endlocal
 
-pause
+rem pause
+exit /B 0
 
 
 :Info_Message
