@@ -48,7 +48,9 @@ elif abs(float(fps)-50.0) < 0.1:
     den = 5
 
 else:
+    print("*****************************")
     print("fpska ne rabotaet s takim fps")
+    print("*****************************\n\n\n")
 
 
 with open(sys.argv[2]) as fd1, open(sys.argv[3], 'w') as fd2:

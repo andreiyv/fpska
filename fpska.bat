@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 
 cls
 
-CALL :Info_Message "fpska v0.7 - скрипт для конвертации в 60 fps"
+CALL :Info_Message "fpska v0.8 - скрипт для конвертации в 60 fps"
 
 set fpska_home=%~dp0
 set ffmpeg_threads=1
@@ -199,6 +199,8 @@ echo [Шаг 3/5] Создаем скрипт для Vapoursynth из шаблона
 
 if "!method!"=="slow" (
 copy "!fpska_home!scripts\fpska_slow.pvy" "!fpska_home!scripts\work.pvy" >NUL
+) else if "!method!"=="lossless" (
+copy "!fpska_home!scripts\fpska_slow.pvy" "!fpska_home!scripts\work.pvy" >NUL
 ) else if "!method!"=="medium" (
 copy "!fpska_home!scripts\fpska_medium.pvy" "!fpska_home!scripts\work.pvy" >NUL
 ) else if "!method!"=="fast" (
@@ -234,6 +236,8 @@ if "!method!"=="slow" (
 "!fpska_home!python\VSPipe.exe" --y4m "!fpska_home!scripts\work.pvy" "-" | "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
 ) else if "!method!"=="fast" (
 "!fpska_home!python\VSPipe.exe" --y4m "!fpska_home!scripts\work.pvy" "-" | "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
+)else if "!method!"=="lossless" (
+"!fpska_home!python\VSPipe.exe" --y4m "!fpska_home!scripts\work.pvy" "-" | "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v huffyuv "!fpska_home!tmp\60fps_video.avi" -v quiet -stats
 )
 
 if %errorlevel%==0 (
@@ -251,6 +255,31 @@ echo [Шаг 5/5] Склеиваем видео и звуковую дорожки
 
 del "!fpska_home!tmp\*.log" >NUL 2>NUL
 
+if "!method!"=="lossless" (
+	
+	if not exist !video_file!_fpska_60fps (
+		mkdir !video_file!_fpska_60fps
+	) else (
+		echo удалите папку !video_file!_fpska_60fps и запустите заново
+		pause
+		exit
+	)
+	
+	copy !fpska_home!tmp !video_file!_fpska_60fps
+    echo конвертирование в 60 fps завершенно
+	echo видео и звуковые дорожки скопированы в !video_file!_fpska_60fps
+	pause
+	exit
+	
+	
+) else (
+	if exist !fpska_home!tmp\60fps_audio.wma (
+		echo mkvmerge не работает с wma, поэтому сконвертируем звуковую дорожку в mp3
+		!fpska_home!ffmpeg\bin\ffmpeg.exe -i !fpska_home!tmp\60fps_audio.wma -b:a 320k !fpska_home!tmp\60fps_audio.mp3 -v quiet
+		del "!fpska_home!tmp\60fps_audio.wma" >NUL 2>NUL
+	)
+
+
 if "!audio_pcm!"=="0" (
 	for %%i in ("!fpska_home!tmp\*.*") do set str=!str! "%%i"
 
@@ -264,6 +293,7 @@ if "!audio_pcm!"=="0" (
 		pause
 		exit
 	)
+
 
 rem 	del "!fpska_home!ffprobe.log" >NUL
 
@@ -285,6 +315,8 @@ rem 	del "!fpska_home!ffprobe.log" >NUL
 	echo Преобразование исходного видео в формат 60fps закончено
 	echo %time%
 	echo.
+)
+
 )
 
 endlocal
