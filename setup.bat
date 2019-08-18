@@ -9,10 +9,10 @@ rmdir /S/Q ffmpeg
 
 
 
-"%~dp0distr\curl.exe" https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1.1-win64-static.zip --output "%~dp0ffmpeg-4.1.1-win64-static.zip"
-"%~dp0distr\7za.exe" -aoa x "%~dp0ffmpeg-4.1.1-win64-static.zip" -o"%~dp0"
-rename "%~dp0ffmpeg-4.1.1-win64-static" "ffmpeg"
-del "%~dp0ffmpeg-4.1.1-win64-static.zip"
+"%~dp0distr\curl.exe" https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.2-win64-static.zip --output "%~dp0ffmpeg-4.2-win64-static.zip"
+"%~dp0distr\7za.exe" -aoa x "%~dp0ffmpeg-4.2-win64-static.zip" -o"%~dp0"
+rename "%~dp0ffmpeg-4.2-win64-static" "ffmpeg"
+del "%~dp0ffmpeg-4.2-win64-static.zip"
 echo.
 
 
