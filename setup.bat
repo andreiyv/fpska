@@ -16,6 +16,7 @@ del "%~dp0ffmpeg-4.2-win64-static.zip"
 echo.
 
 
+
 echo -----------------------------------------------------------------
 echo Download Python and Vapoursynth
 echo -----------------------------------------------------------------
@@ -32,7 +33,7 @@ echo.
 echo -----------------------------------------------------------------
 echo Download SVPflow libraries
 echo -----------------------------------------------------------------
-"%~dp0distr\curl.exe" https://www.svp-team.com/files/gpl/svpflow-4.2.0.142.zip --output "%~dp0svpflow-4.2.0.142.zip"
+"%~dp0distr\curl.exe" --retry 5 --retry-delay 5 https://web.archive.org/web/20190322064557/http://www.svp-team.com/files/gpl/svpflow-4.2.0.142.zip --output "%~dp0svpflow-4.2.0.142.zip"
 "%~dp0distr\7za.exe" -aoa x "%~dp0svpflow-4.2.0.142.zip" -o"%~dp0"
 copy "%~dp0svpflow-4.2.0.142\lib-windows\vapoursynth\x64\*.dll" "%~dp0python\vapoursynth64\plugins"
 del "%~dp0svpflow-4.2.0.142.zip"

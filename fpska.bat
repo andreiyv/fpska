@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 
 cls
 
-CALL :Info_Message "fpska v0.8 - скрипт для конвертации в 60 fps"
+CALL :Info_Message "fpska v0.9 - скрипт для конвертации в 60 fps"
 
 set fpska_home=%~dp0
 set ffmpeg_threads=1
@@ -233,9 +233,9 @@ echo Текущее количество сконвертированных кадров (frame):
 if "!method!"=="slow" (
 "!fpska_home!python\VSPipe.exe" --y4m "!fpska_home!scripts\work.pvy" "-" | "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
 ) else if "!method!"=="medium" (
-"!fpska_home!python\VSPipe.exe" --y4m "!fpska_home!scripts\work.pvy" "-" | "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
+"!fpska_home!python\VSPipe.exe" --y4m "!fpska_home!scripts\work.pvy" "-" | "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 24 -preset medium "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
 ) else if "!method!"=="fast" (
-"!fpska_home!python\VSPipe.exe" --y4m "!fpska_home!scripts\work.pvy" "-" | "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
+"!fpska_home!python\VSPipe.exe" --y4m "!fpska_home!scripts\work.pvy" "-" | "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 24 -preset fast "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
 )else if "!method!"=="lossless" (
 "!fpska_home!python\VSPipe.exe" --y4m "!fpska_home!scripts\work.pvy" "-" | "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v huffyuv "!fpska_home!tmp\60fps_video.avi" -v quiet -stats
 )

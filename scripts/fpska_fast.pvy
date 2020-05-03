@@ -7,7 +7,7 @@ clip = clip.resize.Bicubic(format=vs.YUV420P8)
 super_params='{"gpu":0}'
 analyse_params="""{block:{w:32,h:32}, 
 	main:{search:{coarse:{distance:0}}},
-	refine:[{thsad:200}]}"""
+	refine:[{thsad:1000}]}"""
 smoothfps_params='{"rate":{"num":vnm,"den":vdn,"algo":1}}'
 
 super  = core.svp1.Super(clip,super_params)
