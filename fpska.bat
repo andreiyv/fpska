@@ -66,9 +66,6 @@ if %errorlevel%==0 (
 	echo.
 ) else (
 	echo Ошибка извлечения информации
-	echo Проверьте есть ли в имени видеофайла русские буквы, скобки, 
-	echo восклицательные знаки и т.д. В настоящей версии они не поддерживаются
-	echo Переименуйте пожалуйста исходный видеофайл
 	pause
 	exit
 )
@@ -214,8 +211,8 @@ set "threads=!ncpu!"
 set "textfile=!fpska_home!scripts\work.pvy"
 set "newfile=!fpska_home!scripts\tmp.txt"
 
-"!fpska_home!python\python.exe" "!fpska_home!scripts\find-and-replace.py" "fullhd.mkv" "!video_file!" "!textfile!" "!fpska_home!scripts\s.txt" 
-"!fpska_home!python\python.exe" "!fpska_home!scripts\find-and-replace.py" "nthreads" "!ncpu!" "!textfile!" "!fpska_home!scripts\s.txt"
+"!fpska_home!python\python.exe" "!fpska_home!scripts\find_and_replace.py" "fullhd.mkv" "!video_file!" "!textfile!" "!fpska_home!scripts\s.txt" 
+"!fpska_home!python\python.exe" "!fpska_home!scripts\find_and_replace.py" "nthreads" "!ncpu!" "!textfile!" "!fpska_home!scripts\s.txt"
 
 "!fpska_home!python\python.exe" "!fpska_home!scripts\setfps.py" "!fpska_home!tmp\ffprobe.log" "!textfile!" "!fpska_home!scripts\s.txt" "!fpska_home!Mediainfo_CLI\MediaInfo.exe" "!video_file!"
 
@@ -228,7 +225,7 @@ if exist "!fpska_home!scripts\work.pvy" (
 	exit
 )
 
-echo [Шаг 4/5] Создаем видео с частотой 60fps
+echo [Шаг 4/5] Создаем видео с частотой 60 fps
 echo Текущее количество сконвертированных кадров (frame):
 if "!method!"=="slow" (
 "!fpska_home!python\VSPipe.exe" --y4m "!fpska_home!scripts\work.pvy" "-" | "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
@@ -241,17 +238,16 @@ if "!method!"=="slow" (
 )
 
 if %errorlevel%==0 (
-	echo видео с частотой 60fps cоздано успешно "!fpska_home!tmp\60fps_video.mp4"
-	echo.
+	echo Видео с частотой 60fps cоздано успешно "!fpska_home!tmp\60fps_video.mp4"
 ) else (
-	echo Ошибка создания видео с частотой 60fps
+	echo Ошибка создания видео с частотой 60 fps
 	pause
 	exit
 )
 
 echo.
 
-echo [Шаг 5/5] Склеиваем видео и звуковую дорожки
+echo [Шаг 5/5] Склеиваем видео и звуковую дорожку
 
 del "!fpska_home!tmp\*.log" >NUL 2>NUL
 
@@ -260,14 +256,12 @@ if "!method!"=="lossless" (
 	if not exist !video_file!_fpska_60fps (
 		mkdir !video_file!_fpska_60fps
 	) else (
-		echo удалите папку !video_file!_fpska_60fps и запустите заново
-		pause
-		exit
+		rmdir /S/Q !video_file!_fpska_60fps
 	)
 	
 	copy !fpska_home!tmp !video_file!_fpska_60fps
-    echo конвертирование в 60 fps завершенно
-	echo видео и звуковые дорожки скопированы в !video_file!_fpska_60fps
+    echo Конвертирование в 60 fps завершено
+	echo Видео и звуковая дорожка скопированы в !video_file!_fpska_60fps
 	pause
 	exit
 	
@@ -286,8 +280,7 @@ if "!audio_pcm!"=="0" (
 "!fpska_home!mkvtoolnix\mkvmerge.exe" !str! -o "!video_file!_fpska_60fps.mkv" >NUL
 
 	if %errorlevel%==0 (
-		echo видео и звуковая дорожки объеденены успешно
-		echo.
+		echo Видео и звуковая дорожка объединены успешно
 	) else (
 		echo Ошибка при объединении видео и звуковой дорожки
 		pause
