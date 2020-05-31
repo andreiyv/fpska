@@ -2,13 +2,15 @@ import os
 import re
 import sys
 from subprocess import Popen, PIPE
+from decimal import Decimal, ROUND_FLOOR
+from fractions import Fraction
 
 
 def find_fps(filename):
 
     if os.path.exists(filename):
 
-        with open(filename, 'r') as datafile:
+        with open(filename, 'r', encoding='utf-8') as datafile:
 
             try:
                 fps_in_log_file = None
@@ -25,51 +27,47 @@ def find_fps(filename):
                         break
             except:
                 print("Problem with opening ", filename)
+    else:
+        return 0
 
     return fps_in_log_file
 
 
-fps = find_fps(sys.argv[1])
+def setfps(arg1, arg2, arg3, arg4, arg5):
+    fps_str = find_fps(arg1)
+    if fps_str == None:
+        return 0
+    fps = Decimal(fps_str)
+    if fps >= Decimal("59"):
+        print("Видео уже в 60 fps!")
+        return 0
+    frac = Fraction(Decimal("60") / fps.quantize(Decimal("1"), ROUND_FLOOR))
+    num = frac.numerator
+    den = frac.denominator
 
-if abs(float(fps)-15.0) < 0.1:
-    num = 8
-    den = 2
-if abs(float(fps)-24.0) < 0.1:
-    num = 5
-    den = 2
-elif abs(float(fps)-25.0) < 0.1:
-    num = 12
-    den = 5
-elif abs(float(fps)-30.0) < 0.1:
-    num = 2
-    den = 1
-elif abs(float(fps)-50.0) < 0.1:
-    num = 6
-    den = 5
+    with open(arg2, encoding='utf-8') as fd1, open(arg3, 'w', encoding='utf-8') as fd2:
+        for line in fd1:
+            line = line.replace("vnm", str(num))
+            line = line.replace("vdn", str(den))
+            fd2.write(line)
+    try:
+        os.rename(arg3, arg2)
+    except WindowsError:
+        os.remove(arg2)
+        os.rename(arg3, arg2)
 
-else:
-    print("*****************************")
-    print("fpska ne rabotaet s takim fps")
-    print("*****************************\n\n\n")
+    varg = '''--Inform=Video;%%FrameCount%%'''
+    process = Popen([arg4, varg, arg5], stdout=PIPE)
+    (output, err) = process.communicate()
+    exit_code = process.wait()
+    nframes = re.sub('[^0-9]', '', str(output))
+    print("Частота кадров в исходном видео: ", fps, "fps")
+    print("Количество кадров в исходном видео: ", nframes)
+
+    print("Количество кадров в 60 fps видео (примерно): ",
+          int(int(nframes)*num/den))
+    return int(int(nframes)*num/den)
 
 
-with open(sys.argv[2]) as fd1, open(sys.argv[3], 'w') as fd2:
-    for line in fd1:
-        line = line.replace("vnm", str(num))
-        line = line.replace("vdn", str(den))
-        fd2.write(line)
-try:
-    os.rename(sys.argv[3], sys.argv[2])
-except WindowsError:
-    os.remove(sys.argv[2])
-    os.rename(sys.argv[3], sys.argv[2])
-
-varg = '''--Inform=Video;%%FrameCount%%'''
-process = Popen([sys.argv[4], varg, sys.argv[5]], stdout=PIPE)
-(output, err) = process.communicate()
-exit_code = process.wait()
-nframes=re.sub('[^0-9]', '', str(output))
-print("\nЧастота кадров в исходном видео: ", fps, "fps")
-print("Количество кадров в исходном видео: ", nframes)
-
-print("Количество кадров в 60 fps видео (примерно): ", int(int(nframes)*num/den), "\n")
+if __name__ == "__main__":
+    setfps(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
