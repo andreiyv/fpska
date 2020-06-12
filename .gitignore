@@ -4,6 +4,7 @@ eac3to/
 mkvtoolnix/
 python/
 Mediainfo_CLI/
+scripts/setfps
 tmp/
 gui.bat
 testwx.py

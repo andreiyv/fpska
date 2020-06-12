@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 
 cls
 
-CALL :Info_Message "fpska v0.9.1 - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 60 fps"
+CALL :Info_Message "fpska v0.9 - скрипт для конвертации в 60 fps"
 
 set fpska_home=%~dp0
 set ffmpeg_threads=1
@@ -23,9 +23,9 @@ set video_ext=%%~xi
 rmdir /S/Q "!fpska_home!tmp"
 mkdir "!fpska_home!tmp"
 
-echo Fpska пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ: !fpska_home!
+echo Fpska домашняя папка: !fpska_home!
 echo.
-echo пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ:  !video_file!
+echo Полный путь к файлу:  !video_file!
 echo.
 
 if [%1]==[] (
@@ -40,11 +40,11 @@ set ncpu=4
 set ncpu=%3
 )
 
-echo пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ 60fps: !method!
+echo Метод конвертации в 60fps: !method!
 echo.
 
 if [!video_file!]==[] (
-	echo пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+	echo Вы забыли указать имя файла
 	echo.
 	pause
 	exit
@@ -53,19 +53,22 @@ if [!video_file!]==[] (
 CALL :Check_Install
 echo.
 
-echo пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+echo Время начала кодирования
 echo %time%
 echo.
 
 echo --------------------------------------------------------
-echo [пїЅпїЅпїЅ 1/5] пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+echo [Шаг 1/5] Извлекаем информацию о видео и аудио кодеках из видеофайла
 "!fpska_home!ffmpeg\bin\ffprobe.exe" -i "!video_file!" 1>NUL 2> "!fpska_home!tmp\ffprobe.log"
 
 if %errorlevel%==0 (
-	echo пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ "!fpska_home!tmp\ffprobe.log"
+	echo Информация извлечена успешно в файл "!fpska_home!tmp\ffprobe.log"
 	echo.
 ) else (
-	echo пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	echo Ошибка извлечения информации
+	echo Проверьте есть ли в имени видеофайла русские буквы, скобки, 
+	echo восклицательные знаки и т.д. В настоящей версии они не поддерживаются
+	echo Переименуйте пожалуйста исходный видеофайл
 	pause
 	exit
 )
@@ -131,7 +134,7 @@ CALL :PCM_Warning
 
 @echo off
 
-echo [пїЅпїЅпїЅ 2/5] пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+echo [Шаг 2/5] Извлекаем звуковую дорожку из исходного видеофайла
 if "!container!"=="mp4" (
  if "!audio_codeck!"=="aac" ( 
 "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i "!video_file!" -vn -acodec copy "!fpska_home!tmp\60fps_audio.aac" -v quiet
@@ -183,16 +186,16 @@ cd "!fpska_home!"
 )
 
 if %errorlevel%==0 (
-	echo пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	echo Звуковая дорожка извлечена успешно
 	echo.
 ) else (
-	echo пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	echo Ошибка извлечения звуковой дорожки
 	pause
 	exit
 )
 
 
-echo [пїЅпїЅпїЅ 3/5] пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ Vapoursynth пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+echo [Шаг 3/5] Создаем скрипт для Vapoursynth из шаблона
 
 if "!method!"=="slow" (
 copy "!fpska_home!scripts\fpska_slow.pvy" "!fpska_home!scripts\work.pvy" >NUL
@@ -211,22 +214,22 @@ set "threads=!ncpu!"
 set "textfile=!fpska_home!scripts\work.pvy"
 set "newfile=!fpska_home!scripts\tmp.txt"
 
-"!fpska_home!python\python.exe" "!fpska_home!scripts\find_and_replace.py" "fullhd.mkv" "!video_file!" "!textfile!" "!fpska_home!scripts\s.txt" 
-"!fpska_home!python\python.exe" "!fpska_home!scripts\find_and_replace.py" "nthreads" "!ncpu!" "!textfile!" "!fpska_home!scripts\s.txt"
+"!fpska_home!python\python.exe" "!fpska_home!scripts\find-and-replace.py" "fullhd.mkv" "!video_file!" "!textfile!" "!fpska_home!scripts\s.txt" 
+"!fpska_home!python\python.exe" "!fpska_home!scripts\find-and-replace.py" "nthreads" "!ncpu!" "!textfile!" "!fpska_home!scripts\s.txt"
 
 "!fpska_home!python\python.exe" "!fpska_home!scripts\setfps.py" "!fpska_home!tmp\ffprobe.log" "!textfile!" "!fpska_home!scripts\s.txt" "!fpska_home!Mediainfo_CLI\MediaInfo.exe" "!video_file!"
 
 if exist "!fpska_home!scripts\work.pvy" (
-	echo пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ Vapoursynth пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	echo Скрипт для Vapoursynth создан успешно
 	echo.
 ) else (
-	echo пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Vapoursynth пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	echo Ошибка создания Vapoursynth скрипта
 	pause
 	exit
 )
 
-echo [пїЅпїЅпїЅ 4/5] пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 60 fps
-echo пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (frame):
+echo [Шаг 4/5] Создаем видео с частотой 60fps
+echo Текущее количество сконвертированных кадров (frame):
 if "!method!"=="slow" (
 "!fpska_home!python\VSPipe.exe" --y4m "!fpska_home!scripts\work.pvy" "-" | "!fpska_home!ffmpeg\bin\ffmpeg.exe" -y -i pipe: -c:a copy -c:v libx264 -crf 20 -preset slow "!fpska_home!tmp\60fps_video.mp4" -v quiet -stats
 ) else if "!method!"=="medium" (
@@ -238,16 +241,17 @@ if "!method!"=="slow" (
 )
 
 if %errorlevel%==0 (
-	echo пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 60fps cпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ "!fpska_home!tmp\60fps_video.mp4"
+	echo видео с частотой 60fps cоздано успешно "!fpska_home!tmp\60fps_video.mp4"
+	echo.
 ) else (
-	echo пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 60 fps
+	echo Ошибка создания видео с частотой 60fps
 	pause
 	exit
 )
 
 echo.
 
-echo [пїЅпїЅпїЅ 5/5] пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+echo [Шаг 5/5] Склеиваем видео и звуковую дорожки
 
 del "!fpska_home!tmp\*.log" >NUL 2>NUL
 
@@ -256,19 +260,21 @@ if "!method!"=="lossless" (
 	if not exist !video_file!_fpska_60fps (
 		mkdir !video_file!_fpska_60fps
 	) else (
-		rmdir /S/Q !video_file!_fpska_60fps
+		echo удалите папку !video_file!_fpska_60fps и запустите заново
+		pause
+		exit
 	)
 	
 	copy !fpska_home!tmp !video_file!_fpska_60fps
-    echo пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ 60 fps пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-	echo пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ !video_file!_fpska_60fps
+    echo конвертирование в 60 fps завершенно
+	echo видео и звуковые дорожки скопированы в !video_file!_fpska_60fps
 	pause
 	exit
 	
 	
 ) else (
 	if exist !fpska_home!tmp\60fps_audio.wma (
-		echo mkvmerge пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ wma, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ mp3
+		echo mkvmerge не работает с wma, поэтому сконвертируем звуковую дорожку в mp3
 		!fpska_home!ffmpeg\bin\ffmpeg.exe -i !fpska_home!tmp\60fps_audio.wma -b:a 320k !fpska_home!tmp\60fps_audio.mp3 -v quiet
 		del "!fpska_home!tmp\60fps_audio.wma" >NUL 2>NUL
 	)
@@ -280,9 +286,10 @@ if "!audio_pcm!"=="0" (
 "!fpska_home!mkvtoolnix\mkvmerge.exe" !str! -o "!video_file!_fpska_60fps.mkv" >NUL
 
 	if %errorlevel%==0 (
-		echo пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		echo видео и звуковая дорожки объеденены успешно
+		echo.
 	) else (
-		echo пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		echo Ошибка при объединении видео и звуковой дорожки
 		pause
 		exit
 	)
@@ -292,20 +299,20 @@ rem 	del "!fpska_home!ffprobe.log" >NUL
 
 	del "!video_file!.ffindex" >NUL
 
-	echo пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 60fps пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	echo Преобразование исходного видео в формат 60fps закончено
 	echo %time%
 	echo.
 	echo --------------------------------------------------------
 	echo.
-	echo пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 60fps: "!video_file!_fpska_60fps.mkv"
+	echo Видеофайл в формате 60fps: "!video_file!_fpska_60fps.mkv"
 	echo.
 	
 ) else if "!audio_pcm!"=="1" (
-	echo пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ PCM,
-	echo пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
-	echo пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ tmp.
+	echo Так как в видеофайле содержится звуковая дорожка в формате PCM,
+	echo то финальная склейка видео и аудио дорожек не была проведена.
+	echo Вы сможете сделать это самостоятельно. Все файлы находятся в директории tmp.
 	echo.
-	echo пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 60fps пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	echo Преобразование исходного видео в формат 60fps закончено
 	echo %time%
 	echo.
 )
@@ -330,22 +337,22 @@ EXIT /B 0
 set not_installed=0
 
 if not exist "!fpska_home!eac3to\eac3to.exe" (
-	echo eac3to пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ setup.bat
+	echo eac3to не установлена, запустите setup.bat
 	set not_installed=1
 )
 
 if not exist "!fpska_home!ffmpeg\bin\ffmpeg.exe" (
-	echo ffmpeg пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ setup.bat
+	echo ffmpeg не установлен, запустите setup.bat
 	set not_installed=1
 )
 
 if not exist "!fpska_home!mkvtoolnix\mkvmerge.exe" (
-	echo mkvtoolnix пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ setup.bat
+	echo mkvtoolnix не установлены, запустите setup.bat
 	set not_installed=1
 )
 
 if not exist "!fpska_home!python\vapoursynth64\plugins\svpflow1_vs64.dll" (
-	echo svpflow пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ setup.bat
+	echo svpflow не установлена, запустите setup.bat
 	set not_installed=1
 )
 
@@ -357,11 +364,11 @@ if "!not_installed!"=="1" (
 EXIT /B 0
 
 :PCM_Warning
-	echo пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ^^! пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ PCM.
-	echo пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ fpsk'пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ audio.
-	echo пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ 60fps пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ,
-	echo пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 60fps video пїЅ audio пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
-	echo пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ tmp.
+	echo Внимание^^! В видеофайле содержится звуковая дорожка в формате PCM.
+	echo В настоящее время fpsk'а не может обрабатывать такой тип audio.
+	echo Поэтому будет сделано преобразование в 60fps для видеодорожки,
+	echo но финальная склейка 60fps video и audio производится не будет.
+	echo Все файлы будут находиться в папке tmp.
 	echo.
 EXIT /B 0
 
