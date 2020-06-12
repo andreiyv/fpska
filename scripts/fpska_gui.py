@@ -9,7 +9,7 @@ sys.path.append("{}\\scripts".format(os.getcwd()))
 from find_and_replace import *
 from setfps import *
 
-fpska_version = '0.9'
+fpska_version = '0.9.1'
 
 def arrjoin(arr):
     out = ""
