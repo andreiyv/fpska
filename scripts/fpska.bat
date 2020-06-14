@@ -1,5 +1,5 @@
 chcp 1251
-setlocal
+@echo off &setlocal
 setlocal enabledelayedexpansion
 cls
 
