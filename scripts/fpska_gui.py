@@ -44,8 +44,7 @@ def OnStartButtonPress_thr(self, event):
             self, srcfile, self.modesbox.GetValue()) else "ERROR"
         self.flist.SetString(self.flist.GetStrings().index(
             " ".join(["(RUNNING)", srcfile])), " ".join([f"({st})", srcfile]))
-        if st == "ERROR":
-            self.gauge.SetValue(0)
+        self.gauge.SetValue(0)
     self.srcfiles = []
     self.flist.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
     self.startbutton.Bind(wx.EVT_BUTTON, self.OnStartButtonPress)
