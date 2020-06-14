@@ -4,6 +4,7 @@ import os
 import threading
 import subprocess
 import re
+from time import time
 
 sys.path.append("{}\\scripts".format(os.getcwd()))
 from find_and_replace import *
@@ -33,17 +34,20 @@ def OnStartButtonPress_thr(self, event):
     self.flist.Unbind(wx.EVT_KEY_UP)
     self.startbutton.Unbind(wx.EVT_BUTTON)
     self.startbutton.Disable()
+    starttime = time()
     print(
         f"Start!\nSource files = {self.srcfiles}\nMode = {self.modesbox.GetValue()}")
     for srcfile in self.srcfiles:
         self.gauge.Pulse()
         self.flist.SetString(self.flist.GetStrings().index(
-            srcfile), " ".join(["(RUNNING)", srcfile]))
-        st = "DONE" if fpskaStart(
-            self, srcfile, self.modesbox.GetValue()) else "ERROR"
+            srcfile), " ".join(["(RUNNING/ЗАПУЩЕНО)", srcfile]))
+        st = "DONE/ЗАВЕРШЕНО" if fpskaStart(
+            self, srcfile, self.modesbox.GetValue()) else "ERROR/ОШИБКА"
         self.flist.SetString(self.flist.GetStrings().index(
-            " ".join(["(RUNNING)", srcfile])), " ".join([f"({st})", srcfile]))
+            " ".join(["(RUNNING/ЗАПУЩЕНО)", srcfile])), " ".join([f"({st})", srcfile]))
         self.gauge.SetValue(0)
+    endtime = time()
+    print(f"\nЗатрачено времени: {etfromseconds(endtime - starttime)}")
     self.srcfiles = []
     self.flist.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
     self.startbutton.Bind(wx.EVT_BUTTON, self.OnStartButtonPress)
