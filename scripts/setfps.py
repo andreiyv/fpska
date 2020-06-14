@@ -2,7 +2,7 @@ import os
 import re
 import sys
 from subprocess import Popen, PIPE
-from decimal import Decimal, ROUND_FLOOR
+from decimal import Decimal, ROUND_FLOOR, ROUND_UP
 from fractions import Fraction
 
 
@@ -28,7 +28,7 @@ def find_fps(filename):
             except:
                 print("Problem with opening ", filename)
     else:
-        return 0
+        return None
 
     return fps_in_log_file
 
@@ -38,12 +38,17 @@ def setfps(arg1, arg2, arg3, arg4, arg5):
     if fps_str == None:
         return 0
     fps = Decimal(fps_str)
-    if fps >= Decimal("59"):
-        print("Видео уже в 60 fps!")
+    if fps >= Decimal("55"):
+        print("*******Видео уже в 60 fps!*******\n",
+              f"...Ну почти (в {fps} fps)\n" if fps < Decimal("60") else "", sep="")
         return 0
-    frac = Fraction(Decimal("60") / fps.quantize(Decimal("1"), ROUND_FLOOR))
+
+    mult = Decimal("60") / fps.quantize(Decimal("1"), ROUND_UP)
+    multq = mult.quantize(Decimal("1.0"), ROUND_UP)
+    frac = Fraction(multq)
     num = frac.numerator
     den = frac.denominator
+    print(f"[DEBUG] num={num} den={den} multq={multq}")
 
     with open(arg2, encoding='utf-8') as fd1, open(arg3, 'w', encoding='utf-8') as fd2:
         for line in fd1:
@@ -62,12 +67,13 @@ def setfps(arg1, arg2, arg3, arg4, arg5):
     exit_code = process.wait()
     nframes = re.sub('[^0-9]', '', str(output))
     print("Частота кадров в исходном видео: ", fps, "fps")
+    print("Частота кадров в выходном видео: ", fps*num/den, "fps")
     print("Количество кадров в исходном видео: ", nframes)
-
-    print("Количество кадров в 60 fps видео (примерно): ",
+    print("Количество кадров в выходном видео (примерно): ",
           int(int(nframes)*num/den))
     return int(int(nframes)*num/den)
 
 
 if __name__ == "__main__":
-    setfps(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
+    result = setfps(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
+    exit(0 if result else 1)

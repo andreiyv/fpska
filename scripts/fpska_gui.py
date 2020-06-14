@@ -124,9 +124,9 @@ def fpskaStart(self, src, mode):
             el = os.system(
                 '..\\eac3to\\eac3to.exe "{}" -demux >NUL'.format(os.path.split(src)[1]))
             os.remove(os.path.split(src)[1])
-            os.remove("*.txt")
-            os.remove("*.h264")
-            os.remove("*.vc1")
+            os.system('del *.txt >NUL 2>NUL')
+            os.system('del *.h264 >NUL 2>NUL')
+            os.system('del *.vc1 >NUL 2>NUL')
             os.chdir(".\..")
     if el == 0:
         print("Звуковая дорожка извлечена успешно")
