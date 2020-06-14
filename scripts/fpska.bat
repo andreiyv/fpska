@@ -238,13 +238,27 @@ set "newfile=!fpska_home!scripts\tmp.txt"
 
 "!fpska_home!python\python.exe" "!fpska_home!scripts\setfps.py" "!fpska_home!tmp\ffprobe.log" "!textfile!" "!fpska_home!scripts\s.txt" "!fpska_home!Mediainfo_CLI\MediaInfo.exe" "!video_file!"
 
+set err=0
+
 if %errorlevel%==0 (
-	echo Скрипт для Vapoursynth создан успешно
-	echo.
+	set err=0
 ) else (
 	echo Ошибка создания Vapoursynth скрипта
 	pause
 	exit
+)
+if exist "!fpska_home!scripts\work.pvy" (
+	set err=0
+) else (
+	set err=1
+	echo Ошибка создания Vapoursynth скрипта
+	pause
+	exit
+)
+
+if %err%==0 (
+	echo Vapoursynth скрипт создан успешно
+	echo.
 )
 
 echo [Шаг 4/5] Создаем видео с частотой 60 fps
