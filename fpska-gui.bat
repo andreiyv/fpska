@@ -1,10 +1,12 @@
 @echo off
 chcp 1251
+pushd %~dp0
+cls
 
 set not_installed=0
 
 if not exist ".\eac3to\eac3to.exe" (
-	echo eac3to не установлен, запустите setup.bat
+	echo eac3to не установлена, запустите setup.bat
 	set not_installed=1
 )
 
@@ -14,12 +16,12 @@ if not exist ".\ffmpeg\bin\ffmpeg.exe" (
 )
 
 if not exist ".\mkvtoolnix\mkvmerge.exe" (
-	echo mkvtoolnix не установлен, запустите setup.bat
+	echo mkvtoolnix не установлены, запустите setup.bat
 	set not_installed=1
 )
 
 if not exist ".\python\vapoursynth64\plugins\svpflow1_vs64.dll" (
-	echo svpflow не установлен, запустите setup.bat
+	echo svpflow не установлена, запустите setup.bat
 	set not_installed=1
 )
 

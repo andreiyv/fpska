@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 
 set video_file=%~f1
 
-"%~dp0\fpska.bat" medium "!video_file!"
+"%~dp0\scripts\fpska.bat" medium "!video_file!"
 
 endlocal
 

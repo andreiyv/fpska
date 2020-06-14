@@ -1,12 +1,11 @@
 ffmpeg/
 scripts/work.pvy
+scripts/__pycache__
 eac3to/
 mkvtoolnix/
 python/
 Mediainfo_CLI/
 tmp/
-gui.bat
-testwx.py
 *.avi
 *.h264
 *.mp4
@@ -20,4 +19,3 @@ testwx.py
 *.7z
 *.log
 *.url
-
