@@ -36,7 +36,6 @@ def OnStartButtonPress_thr(self, event):
     print(
         f"Start!\nSource files = {self.srcfiles}\nMode = {self.modesbox.GetValue()}")
     for srcfile in self.srcfiles:
-        self.gauge.SetValue(0)
         self.gauge.Pulse()
         self.flist.SetString(self.flist.GetStrings().index(
             srcfile), " ".join(["(RUNNING)", srcfile]))
