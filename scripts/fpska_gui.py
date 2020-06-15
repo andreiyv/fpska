@@ -40,14 +40,14 @@ def OnStartButtonPress_thr(self, event):
     for srcfile in self.srcfiles:
         self.gauge.Pulse()
         self.flist.SetString(self.flist.GetStrings().index(
-            srcfile), " ".join(["(RUNNING/ЗАПУЩЕНО)", srcfile]))
-        st = "DONE/ЗАВЕРШЕНО" if fpskaStart(
-            self, srcfile, self.modesbox.GetValue()) else "ERROR/ОШИБКА"
+            srcfile), " ".join(["(RUNNING | ЗАПУЩЕНО)", srcfile]))
+        st = "DONE | ЗАВЕРШЕНО" if fpskaStart(
+            self, srcfile, self.modesbox.GetValue()) else "ERROR | ОШИБКА"
         self.flist.SetString(self.flist.GetStrings().index(
-            " ".join(["(RUNNING/ЗАПУЩЕНО)", srcfile])), " ".join([f"({st})", srcfile]))
+            " ".join(["(RUNNING | ЗАПУЩЕНО)", srcfile])), " ".join([f"({st})", srcfile]))
         self.gauge.SetValue(0)
     endtime = time()
-    print(f"\nЗатрачено времени: {etfromseconds(endtime - starttime)}")
+    print(f"\nЗатрачено времени: {etfromseconds(endtime - starttime)}\n")
     self.srcfiles = []
     self.flist.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
     self.startbutton.Bind(wx.EVT_BUTTON, self.OnStartButtonPress)
@@ -56,7 +56,7 @@ def OnStartButtonPress_thr(self, event):
 def fpskaStart(self, src, mode):
     print(f"~{src}~")
     method = self.modes.index(mode)
-    ncpu = 4
+    ncpu = os.cpu_count()
     container = ""
     audio_codec = ""
     audio_pcm = False
@@ -174,24 +174,25 @@ def fpskaStart(self, src, mode):
                   '-c:v'] + ffmpeg_presets[method].split(' ') + ['-v', 'quiet', '-stats']
     vspipe = subprocess.Popen(cmd_vspipe, stdout=subprocess.PIPE)
     ffmpeg = subprocess.Popen(cmd_ffmpeg, stdin=vspipe.stdout, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
-    self.startbutton.SetLabel("ET: ~")
-    self.startbutton.Enable()    
+    self.startbutton.SetLabel("ETA: ~")
+    self.startbutton.Enable()
     for line in iter(ffmpeg.stdout.readline, ''):
         prog = re.findall(r"(?:\d+(?:\.\d*)?|\.\d+)", line)
         if prog != None:
             frame = int(prog[0])
             fps = float(prog[1])
             if fps == 0.0:
-                self.startbutton.SetLabel("ET: ~")
+                self.gauge.SetValue(frame)
+                self.startbutton.SetLabel(f"ETA: ~ ({frame}/~{grange}) fps={fps}")
             else:
                 eframes = abs(grange - frame)
                 eunix = eframes / fps
                 etime = etfromseconds(eunix)
                 self.gauge.SetValue(frame)
-                self.startbutton.SetLabel(f"ET: ~{etime} ({frame}/~{grange}) fps={fps}")
+                self.startbutton.SetLabel(f"ETA: {etime} ({frame}/~{grange}) fps={fps}")
     el = ffmpeg.wait()
     self.startbutton.Disable()
-    self.startbutton.SetLabel("Запуск/Start")
+    self.startbutton.SetLabel("Запуск | Start")
     if el == 0:
         print("Видео с частотой 60 fps cоздано успешно")
     else:
@@ -236,7 +237,7 @@ def fpskaStart(self, src, mode):
 
 app = wx.App()
 
-mainfontstyle = wx.Font(12, wx.FONTFAMILY_DEFAULT,
+mainfontstyle = wx.Font(11, wx.FONTFAMILY_DEFAULT,
                     wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Calibri")
 consolefontstyle = wx.Font(10, wx.FONTFAMILY_DEFAULT,
                     wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Consolas")
@@ -272,25 +273,25 @@ class MainWindow(wx.Frame):
         self.SetBackgroundColour(wx.Colour(255, 255, 255))
         self.vsizer = wx.BoxSizer(wx.VERTICAL)
         self.modesizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.flist = wx.ListBox(self.panel, style=wx.LB_EXTENDED | wx.LB_HSCROLL)
-        self.modelabel = wx.StaticText(self.panel, label="Режим/Mode: ")
-        self.startbutton = wx.Button(self.panel, label="Запуск/Start")
-        self.console = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE | wx.TE_READONLY, size=(-1, 200))
+        self.flist = wx.ListBox(self.panel, style=wx.LB_EXTENDED | wx.LB_HSCROLL, size=(335, 100))
+        self.modelabel = wx.StaticText(self.panel, label="Режим | Mode: ")
+        self.startbutton = wx.Button(self.panel, label="Запуск | Start")
+        self.console = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE | wx.TE_READONLY, size=(335, 200))
         self.gauge = wx.Gauge(self.panel)
         self.modelabel.SetFont(mainfontstyle)
         self.startbutton.SetFont(mainfontstyle)
         self.startbutton.Disable()
         self.console.SetFont(consolefontstyle)
         self.startbutton.Bind(wx.EVT_BUTTON, self.OnStartButtonPress)
-        self.modes = ["быстрый/fast", "средний/medium", "медленный/slow", "без потерь/lossless"]
+        self.modes = ["быстрый | fast", "средний | medium", "медленный | slow", "без потерь | lossless"]
         self.modesbox = wx.ComboBox(self.panel, choices=self.modes,
                                     style=wx.CB_READONLY | wx.CB_DROPDOWN, value=self.modes[0])
         self.modesbox.SetFont(mainfontstyle)
-        self.modesizer.Add(self.modelabel, 1, wx.EXPAND)
+        self.modesizer.Add(self.modelabel, 1, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 5)
         self.modesizer.Add(self.modesbox, 1, wx.EXPAND)
-        self.vsizer.Add(self.flist, 1, wx.EXPAND)
+        self.vsizer.Add(self.flist, 0, wx.EXPAND)
         self.vsizer.Add(self.modesizer, 0, wx.EXPAND)
-        self.vsizer.Add(self.console, 1, wx.EXPAND)
+        self.vsizer.Add(self.console, 0, wx.EXPAND)
         self.vsizer.Add(self.gauge, 0, wx.EXPAND)
         self.vsizer.Add(self.startbutton, 0, wx.EXPAND)
         self.panel.SetSizer(self.vsizer)
@@ -300,9 +301,11 @@ class MainWindow(wx.Frame):
         self.stdout = gstdout(self.console)
         sys.stdout = self.stdout
         print(
-            f"~fpska-{fpska_version}-gui~\nВы можете перетаскивать сюда файлы/You can use drag&drop here!\n"
-            "Чтобы удалить файлы из очереди, выделите их и нажмите DELETE\n"
-            "Select files and press DELETE to remove them from the queue")
+            f"~fpska-{fpska_version}-gui~\n"
+            f"Вы можете перетаскивать сюда файлы\n"
+            f"You can use drag&drop here!\n"
+            f"Чтобы удалить файлы из очереди, выделите их и нажмите DELETE\n"
+            f"Select files and press DELETE to remove them from the queue")
     def OnKeyPress(self, event):
         if event.GetKeyCode() == wx.WXK_DELETE:
             todel = self.flist.GetSelections()
