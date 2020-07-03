@@ -48,7 +48,7 @@ def setfps(arg1, arg2, arg3, arg4, arg5):
     frac = Fraction(multq)
     num = frac.numerator
     den = frac.denominator
-    print(f"[DEBUG] num={num} den={den} multq={multq}")
+#    print(f"[DEBUG] num={num} den={den} multq={multq}")
 
     with open(arg2, encoding='utf-8') as fd1, open(arg3, 'w', encoding='utf-8') as fd2:
         for line in fd1:
@@ -66,11 +66,11 @@ def setfps(arg1, arg2, arg3, arg4, arg5):
     (output, err) = process.communicate()
     exit_code = process.wait()
     nframes = re.sub('[^0-9]', '', str(output))
-    print("Частота кадров в исходном видео: ", fps, "fps")
-    print("Частота кадров в выходном видео: ", fps*num/den, "fps")
-    print("Количество кадров в исходном видео: ", nframes)
-    print("Количество кадров в выходном видео (примерно): ",
-          int(int(nframes)*num/den))
+#    print("Частота кадров в исходном видео: ", fps, "fps")
+#    print("Частота кадров в выходном видео: ", fps*num/den, "fps")
+#    print("Количество кадров в исходном видео: ", nframes)
+#    print("Количество кадров в выходном видео (примерно): ",
+#          int(int(nframes)*num/den))
     return int(int(nframes)*num/den)
 
 

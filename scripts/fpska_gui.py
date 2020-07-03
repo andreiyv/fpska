@@ -6,11 +6,14 @@ import subprocess
 import re
 from time import time
 
+sys.path.append('.')
+
 sys.path.append("{}\\scripts".format(os.getcwd()))
+
 from find_and_replace import *
 from setfps import *
 
-fpska_version = '0.9.1'
+fpska_version = '0.9.1-RUS'
 
 def arrjoin(arr):
     out = ""
@@ -36,15 +39,16 @@ def OnStartButtonPress_thr(self, event):
     self.startbutton.Disable()
     starttime = time()
     print(
-        f"Start!\nSource files = {self.srcfiles}\nMode = {self.modesbox.GetValue()}")
+#         f"\nПоехали!\nSource files = {self.srcfiles}\nMode = {self.modesbox.GetValue()}")
+        f"Поехали!\n")
     for srcfile in self.srcfiles:
         self.gauge.Pulse()
         self.flist.SetString(self.flist.GetStrings().index(
-            srcfile), " ".join(["(RUNNING | ЗАПУЩЕНО)", srcfile]))
-        st = "DONE | ЗАВЕРШЕНО" if fpskaStart(
-            self, srcfile, self.modesbox.GetValue()) else "ERROR | ОШИБКА"
+            srcfile), " ".join(["(РАБОТАЕТ)", srcfile]))
+        st = "ГОТОВО" if fpskaStart(
+            self, srcfile, self.modesbox.GetValue()) else "ОШИБКА"
         self.flist.SetString(self.flist.GetStrings().index(
-            " ".join(["(RUNNING | ЗАПУЩЕНО)", srcfile])), " ".join([f"({st})", srcfile]))
+            " ".join(["(РАБОТАЕТ)", srcfile])), " ".join([f"({st})", srcfile]))
         self.gauge.SetValue(0)
     endtime = time()
     print(f"\nЗатрачено времени: {etfromseconds(endtime - starttime)}\n")
@@ -54,7 +58,7 @@ def OnStartButtonPress_thr(self, event):
     self.modesbox.Enable()
 
 def fpskaStart(self, src, mode):
-    print(f"~{src}~")
+#    print(f"~{src}~")
     method = self.modes.index(mode)
     ncpu = os.cpu_count()
     container = ""
@@ -62,12 +66,12 @@ def fpskaStart(self, src, mode):
     audio_pcm = False
     os.system('rmdir /S/Q ".\\tmp"')
     os.mkdir(".\\tmp")
-    print("[Шаг 1/5] Извлекаем информацию о видео и аудио кодеках из видеофайла")
+    print("[1/5] Анализируем видеофайл")
     el = os.system(
         '.\\ffmpeg\\bin\\ffprobe.exe -i "{}"  2> ".\\tmp\\ffprobe.log"'.format(src))
-    if el == 0:
-        print("Информация извлечена успешно")
-    else:
+    if not el == 0:
+#        print("Информация извлечена успешно")
+#    else:
         print("Ошибка извлечения информации")
         return False
     el = os.system(
@@ -115,7 +119,7 @@ def fpskaStart(self, src, mode):
         'findstr /m /c:"Video: mpeg2video" ".\\tmp\\ffprobe.log" >NUL')
     if el == 0:
         container = "mpeg2"
-    print("[Шаг 2/5] Извлекаем звуковую дорожку из исходного видеофайла")
+    print("[2/5] Извлекаем звуковую дорожку")
     if len(audio_codec) != 0:
         el = os.system(
             '.\\ffmpeg\\bin\\ffmpeg.exe -y -i "{}" -vn -acodec copy ".\\tmp\\60fps_audio.{}" -v quiet'.format(src, audio_codec))
@@ -130,12 +134,12 @@ def fpskaStart(self, src, mode):
             os.system('del *.h264 >NUL 2>NUL')
             os.system('del *.vc1 >NUL 2>NUL')
             os.chdir(".\..")
-    if el == 0:
-        print("Звуковая дорожка извлечена успешно")
-    else:
+    if not el == 0:
+#        print("Звуковая дорожка извлечена успешно")
+#    else:
         print("Ошибка извлечения звуковой дорожки")
         return False
-    print("[Шаг 3/5] Создаем скрипт для Vapoursynth из шаблона")
+    print("[3/5] Инициализируем движок")
     try:
         os.remove(".\\scripts\\work.pvy")
     except:
@@ -159,12 +163,12 @@ def fpskaStart(self, src, mode):
     if grange == 0:
         return False
     self.gauge.SetRange(grange)
-    if os.path.exists(".\\scripts\\work.pvy"):
-        print("Скрипт для Vapoursynth создан успешно")
-    else:
+    if not (os.path.exists(".\\scripts\\work.pvy")):
+#        print("Скрипт для Vapoursynth создан успешно")
+#    else:
         print("Ошибка создания Vapoursynth скрипта")
         return False
-    print("[Шаг 4/5] Создаем видео с частотой 60 fps")
+    print("[4/5] Преобразуем в 60 fps")
     ffmpeg_presets = ['libx264 -crf 24 -preset fast .\\tmp\\60fps_video.mp4',
                       'libx264 -crf 24 -preset medium .\\tmp\\60fps_video.mp4',
                       'libx264 -crf 20 -preset slow .\\tmp\\60fps_video.mp4',
@@ -193,12 +197,12 @@ def fpskaStart(self, src, mode):
     el = ffmpeg.wait()
     self.startbutton.Disable()
     self.startbutton.SetLabel("Запуск | Start")
-    if el == 0:
-        print("Видео с частотой 60 fps cоздано успешно")
-    else:
+    if not el == 0:
+#        print("Видео с частотой 60 fps cоздано успешно")
+#    else:
         print("Ошибка создания видео с частотой 60 fps")
         return False
-    print("[Шаг 5/5] Склеиваем видео и звуковую дорожку")
+    print("[5/5] Склеиваем видео и звук")
     try:
         os.remove(".\\tmp\\ffprobe.log")
     except:
@@ -223,16 +227,16 @@ def fpskaStart(self, src, mode):
             el = os.system(
                 '..\\mkvtoolnix\\mkvmerge.exe {}-o "{}_fpska_60fps.mkv" >NUL'.format(arrjoin(os.listdir(".")), src))
             os.chdir(".\..")
-            if el == 0:
-                print("Видео и звуковая дорожка объединены успешно")
-            else:
+            if not el == 0:
+#                print("Видео и звуковая дорожка объединены успешно")
+#            else:
                 print("Ошибка при объединении видео и звуковой дорожки")
                 return False
     try:
         os.remove(f"{src}.ffindex")
     except:
         pass
-    print("Done!")
+    print("\nГотово!")
     return True
 
 app = wx.App()
@@ -274,8 +278,8 @@ class MainWindow(wx.Frame):
         self.vsizer = wx.BoxSizer(wx.VERTICAL)
         self.modesizer = wx.BoxSizer(wx.HORIZONTAL)
         self.flist = wx.ListBox(self.panel, style=wx.LB_EXTENDED | wx.LB_HSCROLL, size=(335, 100))
-        self.modelabel = wx.StaticText(self.panel, label="Режим | Mode: ")
-        self.startbutton = wx.Button(self.panel, label="Запуск | Start")
+        self.modelabel = wx.StaticText(self.panel, label="Режим: ")
+        self.startbutton = wx.Button(self.panel, label="Запуск")
         self.console = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE | wx.TE_READONLY, size=(335, 200))
         self.gauge = wx.Gauge(self.panel)
         self.modelabel.SetFont(mainfontstyle)
@@ -283,7 +287,7 @@ class MainWindow(wx.Frame):
         self.startbutton.Disable()
         self.console.SetFont(consolefontstyle)
         self.startbutton.Bind(wx.EVT_BUTTON, self.OnStartButtonPress)
-        self.modes = ["быстрый | fast", "средний | medium", "медленный | slow", "без потерь | lossless"]
+        self.modes = ["быстрый", "средний", "медленный", "без потерь"]
         self.modesbox = wx.ComboBox(self.panel, choices=self.modes,
                                     style=wx.CB_READONLY | wx.CB_DROPDOWN, value=self.modes[0])
         self.modesbox.SetFont(mainfontstyle)
@@ -300,12 +304,13 @@ class MainWindow(wx.Frame):
         self.Show(True)
         self.stdout = gstdout(self.console)
         sys.stdout = self.stdout
+        print(f"~fpska-{fpska_version}-gui~\n")
+        print(f"--------------------------------")
         print(
-            f"~fpska-{fpska_version}-gui~\n"
-            f"Вы можете перетаскивать сюда файлы\n"
-            f"You can use drag&drop here!\n"
-            f"Чтобы удалить файлы из очереди, выделите их и нажмите DELETE\n"
-            f"Select files and press DELETE to remove them from the queue")
+            f"Перетащите сюда файлы;\n"
+            f"delete - удалить из списка.")
+        print(f"--------------------------------\n")
+
     def OnKeyPress(self, event):
         if event.GetKeyCode() == wx.WXK_DELETE:
             todel = self.flist.GetSelections()
@@ -321,9 +326,11 @@ class MainWindow(wx.Frame):
             if len(self.srcfiles) == 0:
                 self.startbutton.Disable()
         event.Skip()
+
     def OnStartButtonPress(self, event):
         thr = threading.Thread(target=OnStartButtonPress_thr, args=(self, event))
         thr.start()
+
 
 if __name__ == "__main__":
     wnd = MainWindow()
