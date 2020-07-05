@@ -2,10 +2,12 @@ import click
 from models.fpska import Fpska
 from functions.fpska_controller import FpskaController
 
+
 @click.command()
 @click.option('--verbose', is_flag=True, help='Increases verbosity')
 @click.option('--log', default='on', help='Saves output to log file')
 @click.argument('mode')
+
 def cli(mode, verbose, log):
     """
     \b
@@ -16,19 +18,20 @@ def cli(mode, verbose, log):
     extract - extract audio, video, subtitles
     merge - combine 60fps video, audio, subtitles into mkv
     """
-    click.echo(mode)
-    click.echo(verbose)
-    click.echo(log)
+#    click.echo(mode)
+#    click.echo(verbose)
+#    click.echo(log)
+    return mode, verbose, log
 
 
 if __name__ == '__main__':
-    cli()
+    mode, verbose, log = cli(standalone_mode=False)
 
-    fpska = Fpska(mode)
-#                  verbose,
-#                  log)
+    fpska = Fpska(mode, verbose, log)
 
     fpska_controller = FpskaController(fpska)
+
+    fpska_controller.print()
 
 #    fpska_controller.start()
 
