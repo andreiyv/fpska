@@ -18,20 +18,24 @@ def cli(mode, verbose, log):
     extract - extract audio, video, subtitles
     merge - combine 60fps video, audio, subtitles into mkv
     """
+    app_args = {}
 #    click.echo(mode)
 #    click.echo(verbose)
 #    click.echo(log)
-    return mode, verbose, log
+    app_args['mode'] = mode
+    app_args['verbose'] = verbose
+    app_args['log'] = log
+    return app_args
 
 
 if __name__ == '__main__':
-    mode, verbose, log = cli(standalone_mode=False)
+    app_args = cli(standalone_mode=False)
 
-    fpska = Fpska(mode, verbose, log)
+    fpska = Fpska(**app_args)
 
     fpska_controller = FpskaController(fpska)
 
-    fpska_controller.print()
+    fpska.print()
 
 #    fpska_controller.start()
 

@@ -1,5 +1,10 @@
 class Fpska:
-    def __init__(self, mode="default", verbose=False, log='off'):
-        self.mode = mode
-        self.verbose = verbose
-        self.log = log
+    def __init__(self, **kwargs):
+        self.mode = kwargs.get('mode', "info")
+        self.verbose = kwargs.get('verbose', "false")
+        self.log = kwargs.get('log', "on")
+
+    def print(self):
+        print("Fpska mode: ", self.mode)
+        print("Fpska verbose: ", self.verbose)
+        print("Fpska log: ", self.log)
