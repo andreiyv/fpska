@@ -4,28 +4,28 @@ from functions.fpska_controller import FpskaController
 
 
 @click.command()
-@click.option('--verbose', is_flag=True, help='Increases verbosity')
-@click.option('--log', default='on', help='Saves output to log file')
-@click.argument('mode')
-
-def cli(mode, verbose, log):
+@click.argument('mode', required=True)
+@click.argument('inputfile', required=True, type=click.Path())
+@click.option('--verbose', required=False, is_flag=True, help='Increase verbosity')
+@click.option('--log', required=False, type=click.Path(), help='Save output to log file')
+def cli(mode, verbose, log, inputfile):
     """
     \b
     mode: run|info|check|extract|merge
     run - convert video to 60fps
     info - get information about videofile
-    check - make sure that all 3-rd party programs are installed
     extract - extract audio, video, subtitles
     merge - combine 60fps video, audio, subtitles into mkv
+
+    inputfile - path to input video
     """
-    app_args = {}
-#    click.echo(mode)
-#    click.echo(verbose)
-#    click.echo(log)
-    app_args['mode'] = mode
-    app_args['verbose'] = verbose
-    app_args['log'] = log
-    return app_args
+
+    appargs = {}
+    appargs['mode'] = mode
+    appargs['verbose'] = verbose
+    appargs['log'] = log
+    appargs['inputfile'] = inputfile
+    return appargs
 
 
 if __name__ == '__main__':
