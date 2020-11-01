@@ -9,10 +9,10 @@ rmdir /S/Q ffmpeg
 
 
 
-"%~dp0distr\curl.exe" https://andreyv.ru/distrib/ffmpeg-4.3.1-2020-10-01-full_build.zip --output "%~dp0ffmpeg-4.2-win64-static.zip"
-"%~dp0distr\7za.exe" -aoa x "%~dp0ffmpeg-4.2-win64-static.zip" -o"%~dp0"
-rename "%~dp0ffmpeg-4.2-win64-static" "ffmpeg"
-del "%~dp0ffmpeg-4.2-win64-static.zip"
+"%~dp0distr\curl.exe" https://andreyv.ru/distrib/ffmpeg-4.3.1-2020-10-01-full_build.zip --output "%~dp0ffmpeg-4.3.1-2020-10-01-full_build.zip"
+"%~dp0distr\7za.exe" -aoa x "%~dp0ffmpeg-4.3.1-2020-10-01-full_build.zip" -o"%~dp0"
+rename "%~dp0ffmpeg-4.3.1-2020-10-01-full_build" "ffmpeg"
+del "%~dp0ffmpeg-4.3.1-2020-10-01-full_build.zip"
 echo.
 
 
@@ -71,8 +71,8 @@ echo.
 echo -----------------------------------------------------------------
 echo Download Mediainfo CLI
 echo -----------------------------------------------------------------
-if exist "%~dp0mkvtoolnix" (
-rmdir /S/Q Mediainfo
+if exist "%~dp0Mediainfo_CLI" (
+rmdir /S/Q Mediainfo_CLI
 )
 "%~dp0distr\curl.exe" https://mediaarea.net/download/binary/mediainfo/19.04/MediaInfo_CLI_19.04_Windows_x64.zip --output "%~dp0MediaInfo_CLI_19.04_Windows_x64.zip"
 "%~dp0distr\7za.exe" -aoa x "%~dp0MediaInfo_CLI_19.04_Windows_x64.zip" -o"%~dp0Mediainfo_CLI"

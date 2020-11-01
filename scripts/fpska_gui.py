@@ -1,4 +1,6 @@
 import wx
+import wx.lib.agw.hyperlink as hl
+import wx.adv
 import sys
 import os
 import threading
@@ -196,7 +198,7 @@ def fpskaStart(self, src, mode):
                 self.startbutton.SetLabel(f"ETA: {etime} ({frame}/~{grange}) fps={fps}")
     el = ffmpeg.wait()
     self.startbutton.Disable()
-    self.startbutton.SetLabel("Запуск | Start")
+    self.startbutton.SetLabel("Start")
     if not el == 0:
 #        print("Видео с частотой 60 fps cоздано успешно")
 #    else:
@@ -252,7 +254,7 @@ class FileDnD(wx.FileDropTarget):
         self.window = win
     def OnDropFiles(self, x, y, filenames):
         for fp in filenames:
-            if os.path.splitext(fp)[1] in [".mp4", ".avi", ".mkv", ".m2ts", ".mov", ".3gp", ".3g2"]:
+            if os.path.splitext(fp)[1] in [".mp4", ".avi", ".mkv", ".m2ts", ".mts", ".mov", ".3gp", ".3g2", ".wmv", ".flv"]:
                 if self.window.srcfiles.count(fp) == 0:
                     self.window.srcfiles.append(fp)
                     self.window.flist.Insert(fp, 0)
@@ -270,6 +272,31 @@ class MainWindow(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, title=f"fpska-{fpska_version}-gui", style=wx.MINIMIZE_BOX |
                           wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN)
+        
+        menubar = wx.MenuBar()
+        fileMenu = wx.Menu()
+        fileItem = fileMenu.Append(wx.ID_EXIT, 'Quit', 'Quit application')
+        helpMenu = wx.Menu()
+        helpItem1 = helpMenu.Append(wx.ID_HELP, 'readme', 'Как пользоваться')
+#        helpItem2 = helpMenu.Append(wx.ID_HELP, 'About', 'Как пользоваться')
+        menubar.Append(fileMenu, '&File')
+        menubar.Append(helpMenu, '&Help')
+        self.SetMenuBar(menubar)
+        
+        
+        self.Bind(wx.EVT_MENU, self.OnAboutBox, helpItem1)
+#        self.Bind(wx.EVT_MENU, self.ShowHelpMessage2, helpItem2)
+        self.Bind(wx.EVT_MENU, self.OnQuit, fileItem)
+        
+        
+        
+
+        self.SetSize((300, 200))
+        self.SetTitle('Simple menu')
+        self.Centre()
+
+        
+        
         self.panel = wx.Panel(self)
         self.srcfiles = []
         self.fdt = FileDnD(self)
@@ -279,7 +306,7 @@ class MainWindow(wx.Frame):
         self.modesizer = wx.BoxSizer(wx.HORIZONTAL)
         self.flist = wx.ListBox(self.panel, style=wx.LB_EXTENDED | wx.LB_HSCROLL, size=(335, 100))
         self.modelabel = wx.StaticText(self.panel, label="Режим: ")
-        self.startbutton = wx.Button(self.panel, label="Запуск")
+        self.startbutton = wx.Button(self.panel, label="Start")
         self.console = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE | wx.TE_READONLY, size=(335, 200))
         self.gauge = wx.Gauge(self.panel)
         self.modelabel.SetFont(mainfontstyle)
@@ -287,7 +314,7 @@ class MainWindow(wx.Frame):
         self.startbutton.Disable()
         self.console.SetFont(consolefontstyle)
         self.startbutton.Bind(wx.EVT_BUTTON, self.OnStartButtonPress)
-        self.modes = ["быстрый", "средний", "медленный", "без потерь"]
+        self.modes = ["быстрый", "сбалансированный", "точный", "точный lossless"]
         self.modesbox = wx.ComboBox(self.panel, choices=self.modes,
                                     style=wx.CB_READONLY | wx.CB_DROPDOWN, value=self.modes[0])
         self.modesbox.SetFont(mainfontstyle)
@@ -310,6 +337,30 @@ class MainWindow(wx.Frame):
             f"Перетащите сюда файлы;\n"
             f"delete - удалить из списка.")
         print(f"--------------------------------\n")
+
+    def OnAboutBox(self, e):
+
+        description = """Fpska - переводит видео в формат 60 кадров в секунду. Просто перетащите файл в окно программы и нажмите "Start".
+Для перевода в 60 fps используются библиотеки svpflow.
+Вспомогательные библиотеки:
+ffmpeg, vapoursynth, eac3, mkvtoolnix.
+        """            
+
+        info = wx.adv.AboutDialogInfo()
+
+#        info.SetIcon(wx.Icon('hunter.png', wx.BITMAP_TYPE_PNG))
+        info.SetName('Fpska')
+        info.SetVersion('0.9.3')
+        info.SetDescription(description)
+#        info.SetCopyright('(C) 2007 - 2020 Jan Bodnar')
+#        info.SetWebSite('http://www.zetcode.com')
+
+        wx.adv.AboutBox(info)
+
+        
+    def OnQuit(self, e):
+        self.Close()
+        
 
     def OnKeyPress(self, event):
         if event.GetKeyCode() == wx.WXK_DELETE:
