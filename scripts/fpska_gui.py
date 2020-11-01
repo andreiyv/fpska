@@ -350,7 +350,7 @@ ffmpeg, vapoursynth, eac3, mkvtoolnix.
 
 #        info.SetIcon(wx.Icon('hunter.png', wx.BITMAP_TYPE_PNG))
         info.SetName('Fpska')
-        info.SetVersion('0.9.3')
+        info.SetVersion('0.9.2')
         info.SetDescription(description)
 #        info.SetCopyright('(C) 2007 - 2020 Jan Bodnar')
 #        info.SetWebSite('http://www.zetcode.com')
