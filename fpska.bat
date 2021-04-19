@@ -30,7 +30,9 @@ if %not_installed%==1 (
 	exit
 )
 
-%~dp0python\python.exe %~dp0scripts\fpska_gui.py
+cd scripts
+..\python\python.exe fpska_gui.py
+rem %~dp0python\python.exe %~dp0scripts\fpska_gui.py
 if %errorlevel%==0 (
     exit
 ) else (

@@ -7,21 +7,21 @@ import threading
 import subprocess
 import re
 from time import time
-
 sys.path.append('.')
-
 sys.path.append("{}\\scripts".format(os.getcwd()))
 
-from find_and_replace import *
 from setfps import *
+from find_and_replace import *
 
-fpska_version = '0.9.2'
+fpska_version = '0.9.3'
+
 
 def arrjoin(arr):
     out = ""
     for item in arr:
         out += '"' + str(item) + '"' + ' '
     return out
+
 
 def etfromseconds(s):
     hours = s // 3600
@@ -66,34 +66,35 @@ def fpskaStart(self, src, mode):
     container = ""
     audio_codec = ""
     audio_pcm = False
-    os.system('rmdir /S/Q ".\\tmp"')
-    os.mkdir(".\\tmp")
+    os.system('rmdir /S/Q "..\\tmp"')
+    os.mkdir("..\\tmp")
     print("[1/5] Анализируем видеофайл")
+    print(os.getcwdb())
     el = os.system(
-        '.\\ffmpeg\\bin\\ffprobe.exe -i "{}"  2> ".\\tmp\\ffprobe.log"'.format(src))
+        '..\\ffmpeg\\bin\\ffprobe.exe -i "{}"  2> "..\\tmp\\ffprobe.log"'.format(src))
     if not el == 0:
 #        print("Информация извлечена успешно")
 #    else:
         print("Ошибка извлечения информации")
         return False
     el = os.system(
-        'findstr /m /c:"Audio: aac" ".\\tmp\\ffprobe.log" >NUL')
+        'findstr /m /c:"Audio: aac" "..\\tmp\\ffprobe.log" >NUL')
     if el == 0:
         audio_codec = "aac"
     el = os.system(
-        'findstr /m /c:"Audio: ac3" ".\\tmp\\ffprobe.log" >NUL')
+        'findstr /m /c:"Audio: ac3" "..\\tmp\\ffprobe.log" >NUL')
     if el == 0:
         audio_codec = "ac3"
     el = os.system(
-        'findstr /m /c:"Audio: mp3" ".\\tmp\\ffprobe.log" >NUL')
+        'findstr /m /c:"Audio: mp3" "..\\tmp\\ffprobe.log" >NUL')
     if el == 0:
         audio_codec = "mp3"
     el = os.system(
-        'findstr /m /c:"Audio: wmav" ".\\tmp\\ffprobe.log" >NUL')
+        'findstr /m /c:"Audio: wmav" "..\\tmp\\ffprobe.log" >NUL')
     if el == 0:
         audio_codec = "wma"
     el = os.system(
-        'findstr /m /c:"Audio: pcm_" ".\\tmp\\ffprobe.log" >NUL')
+        'findstr /m /c:"Audio: pcm_" "..\\tmp\\ffprobe.log" >NUL')
     if el == 0:
         print("Внимание! В видеофайле содержится звуковая дорожка в формате PCM.\n"
               "В настоящее время fpsk'а не может обрабатывать такой тип audio.\n"
@@ -102,7 +103,7 @@ def fpskaStart(self, src, mode):
               "Все файлы будут находиться в папке tmp.")
         audio_pcm = True
     el = os.system(
-        'findstr /m "matroska" ".\\tmp\\ffprobe.log" >NUL')
+        'findstr /m "matroska" "..\\tmp\\ffprobe.log" >NUL')
     if el == 0:
         container = "mkv"
     el = os.system(
@@ -110,25 +111,25 @@ def fpskaStart(self, src, mode):
     if el == 0:
         container = "mp4"
     el = os.system(
-        'findstr /m /c:"mpegts" ".\\tmp\\ffprobe.log" >NUL')
+        'findstr /m /c:"mpegts" "..\\tmp\\ffprobe.log" >NUL')
     if el == 0:
         container = "mpegts"
     el = os.system(
-        'findstr /m /c:"avi," ".\\tmp\\ffprobe.log" >NUL')
+        'findstr /m /c:"avi," "..\\tmp\\ffprobe.log" >NUL')
     if el == 0:
         container = "avi"
     el = os.system(
-        'findstr /m /c:"Video: mpeg2video" ".\\tmp\\ffprobe.log" >NUL')
+        'findstr /m /c:"Video: mpeg2video" "..\\tmp\\ffprobe.log" >NUL')
     if el == 0:
         container = "mpeg2"
     print("[2/5] Извлекаем звуковую дорожку")
     if len(audio_codec) != 0:
         el = os.system(
-            '.\\ffmpeg\\bin\\ffmpeg.exe -y -i "{}" -vn -acodec copy ".\\tmp\\60fps_audio.{}" -v quiet'.format(src, audio_codec))
+            '..\\ffmpeg\\bin\\ffmpeg.exe -y -i "{}" -vn -acodec copy "..\\tmp\\60fps_audio.{}" -v quiet'.format(src, audio_codec))
     else:
         if container in ["mkv", "mpegts"]:
-            os.system('copy "{}" ".\\tmp" >NUL'.format(src))
-            os.chdir(".\\tmp")
+            os.system('copy "{}" "..\\tmp" >NUL'.format(src))
+            os.chdir("..\\tmp")
             el = os.system(
                 '..\\eac3to\\eac3to.exe "{}" -demux >NUL'.format(os.path.split(src)[1]))
             os.remove(os.path.split(src)[1])
@@ -143,40 +144,40 @@ def fpskaStart(self, src, mode):
         return False
     print("[3/5] Инициализируем движок")
     try:
-        os.remove(".\\scripts\\work.pvy")
+        os.remove("work.pvy")
     except:
         pass
     if method == 0:
         os.system(
-            'copy ".\\scripts\\fpska_fast.pvy" ".\\scripts\\work.pvy" >NUL')
+            'copy "fpska_fast.pvy" "work.pvy" >NUL')
     elif method == 1:
         os.system(
-            'copy ".\\scripts\\fpska_medium.pvy" ".\\scripts\\work.pvy" >NUL')
+            'copy "fpska_medium.pvy" "work.pvy" >NUL')
     elif method == 2:
         os.system(
-            'copy ".\\scripts\\fpska_slow.pvy" ".\\scripts\\work.pvy" >NUL')
+            'copy "fpska_slow.pvy" "work.pvy" >NUL')
     elif method == 3:
         os.system(
-            'copy ".\\scripts\\fpska_slow.pvy" ".\\scripts\\work.pvy" >NUL')
-    txt = ".\\scripts\\work.pvy"
-    find_and_replace("fullhd.mkv", src, txt, ".\\scripts\\s.txt")
-    find_and_replace("nthreads", str(ncpu), txt, ".\\scripts\\s.txt")
-    grange = setfps(".\\tmp\\ffprobe.log", txt, ".\\scripts\\s.txt", ".\\Mediainfo_CLI\\MediaInfo.exe", src)
+            'copy "fpska_slow.pvy" "work.pvy" >NUL')
+    txt = "work.pvy"
+    find_and_replace("fullhd.mkv", src, txt, "s.txt")
+    find_and_replace("nthreads", str(ncpu), txt, "s.txt")
+    grange = setfps("..\\tmp\\ffprobe.log", txt, "s.txt", "..\\Mediainfo_CLI\\MediaInfo.exe", src)
     if grange == 0:
         return False
     self.gauge.SetRange(grange)
-    if not (os.path.exists(".\\scripts\\work.pvy")):
+    if not (os.path.exists("work.pvy")):
 #        print("Скрипт для Vapoursynth создан успешно")
 #    else:
         print("Ошибка создания Vapoursynth скрипта")
         return False
     print("[4/5] Преобразуем в 60 fps")
-    ffmpeg_presets = ['libx264 -crf 24 -preset fast .\\tmp\\60fps_video.mp4',
-                      'libx264 -crf 24 -preset medium .\\tmp\\60fps_video.mp4',
-                      'libx264 -crf 20 -preset slow .\\tmp\\60fps_video.mp4',
-                      'huffyuv .\\tmp\\60fps_video.avi']
-    cmd_vspipe = ['.\\python\\VSPipe.exe', '--y4m', '.\\scripts\\work.pvy', '-']
-    cmd_ffmpeg = ['.\\ffmpeg\\bin\\ffmpeg.exe', '-y', '-i', 'pipe:', '-c:a', 'copy',
+    ffmpeg_presets = ['libx264 -crf 24 -preset fast ..\\tmp\\60fps_video.mp4',
+                      'libx264 -crf 24 -preset medium ..\\tmp\\60fps_video.mp4',
+                      'libx264 -crf 20 -preset slow ..\\tmp\\60fps_video.mp4',
+                      'huffyuv ..\\tmp\\60fps_video.avi']
+    cmd_vspipe = ['..\\python\\VSPipe.exe', '--y4m', 'work.pvy', '-']
+    cmd_ffmpeg = ['..\\ffmpeg\\bin\\ffmpeg.exe', '-y', '-i', 'pipe:', '-c:a', 'copy',
                   '-c:v'] + ffmpeg_presets[method].split(' ') + ['-v', 'quiet', '-stats']
     vspipe = subprocess.Popen(cmd_vspipe, stdout=subprocess.PIPE)
     ffmpeg = subprocess.Popen(cmd_ffmpeg, stdin=vspipe.stdout, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
@@ -206,7 +207,7 @@ def fpskaStart(self, src, mode):
         return False
     print("[5/5] Склеиваем видео и звук")
     try:
-        os.remove(".\\tmp\\ffprobe.log")
+        os.remove("..\\tmp\\ffprobe.log")
     except:
         pass
     if method == 3:
@@ -214,18 +215,18 @@ def fpskaStart(self, src, mode):
             os.system(f'rmdir /S/Q "{src}_fpska_60fps"')
         else:
             os.mkdir(f"{src}_fpska_60fps")
-        os.system("copy .\\tmp {}_fpska_60fps".format(src))
+        os.system("copy ..\\tmp {}_fpska_60fps".format(src))
         print("Конвертирование в 60 fps завершено\n"
               "Видео и звуковые дорожки скопированы в {}_fpska_60fps".format(src))
     else:
-        if os.path.exists(".\\tmp\\60fps_audio.wma"):
+        if os.path.exists("..\\tmp\\60fps_audio.wma"):
             print(
                 "mkvmerge не работает с wma, поэтому сконвертируем звуковую дорожку в mp3")
             os.system(
-                ".\\ffmpeg\\bin\\ffmpeg.exe -i .\\tmp\\60fps_audio.wma -b:a 320k .\\tmp\\60fps_audio.mp3 -v quiet")
-            os.remove(".\\tmp\\60fps_audio.wma")
+                "..\\ffmpeg\\bin\\ffmpeg.exe -i ..\\tmp\\60fps_audio.wma -b:a 320k ..\\tmp\\60fps_audio.mp3 -v quiet")
+            os.remove("..\\tmp\\60fps_audio.wma")
         if audio_pcm == False:
-            os.chdir(".\\tmp")
+            os.chdir("..\\tmp")
             el = os.system(
                 '..\\mkvtoolnix\\mkvmerge.exe {}-o "{}_fpska_60fps.mkv" >NUL'.format(arrjoin(os.listdir(".")), src))
             os.chdir(".\..")
@@ -248,10 +249,12 @@ mainfontstyle = wx.Font(11, wx.FONTFAMILY_DEFAULT,
 consolefontstyle = wx.Font(10, wx.FONTFAMILY_DEFAULT,
                     wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Consolas")
 
+
 class FileDnD(wx.FileDropTarget):
     def __init__(self, win):
         wx.FileDropTarget.__init__(self)
         self.window = win
+
     def OnDropFiles(self, x, y, filenames):
         for fp in filenames:
             if os.path.splitext(fp)[1] in [".mp4", ".avi", ".mkv", ".m2ts", ".mts", ".mov", ".3gp", ".3g2", ".wmv", ".flv"]:
@@ -261,9 +264,11 @@ class FileDnD(wx.FileDropTarget):
                     self.window.startbutton.Enable()
         return True
 
+
 class gstdout():
     def __init__(self, tctrl):
         self.tctrlout = tctrl
+
     def write(self, text):
         wx.CallAfter(self.tctrlout.WriteText, text)
 
@@ -282,21 +287,15 @@ class MainWindow(wx.Frame):
         menubar.Append(fileMenu, '&File')
         menubar.Append(helpMenu, '&Help')
         self.SetMenuBar(menubar)
-        
-        
+
         self.Bind(wx.EVT_MENU, self.OnAboutBox, helpItem1)
 #        self.Bind(wx.EVT_MENU, self.ShowHelpMessage2, helpItem2)
         self.Bind(wx.EVT_MENU, self.OnQuit, fileItem)
-        
-        
-        
 
         self.SetSize((300, 200))
-        self.SetTitle('Simple menu')
+        self.SetTitle(fpska_version)
         self.Centre()
 
-        
-        
         self.panel = wx.Panel(self)
         self.srcfiles = []
         self.fdt = FileDnD(self)
@@ -350,17 +349,15 @@ ffmpeg, vapoursynth, eac3, mkvtoolnix.
 
 #        info.SetIcon(wx.Icon('hunter.png', wx.BITMAP_TYPE_PNG))
         info.SetName('Fpska')
-        info.SetVersion('0.9.2')
+        info.SetVersion(fpska_version)
         info.SetDescription(description)
 #        info.SetCopyright('(C) 2007 - 2020 Jan Bodnar')
-#        info.SetWebSite('http://www.zetcode.com')
+#        info.SetWebSite('')
 
         wx.adv.AboutBox(info)
 
-        
     def OnQuit(self, e):
         self.Close()
-        
 
     def OnKeyPress(self, event):
         if event.GetKeyCode() == wx.WXK_DELETE:
