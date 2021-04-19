@@ -69,7 +69,7 @@ def fpskaStart(self, src, mode):
     os.system('rmdir /S/Q "..\\tmp"')
     os.mkdir("..\\tmp")
     print("[1/5] Анализируем видеофайл")
-    print(os.getcwdb())
+#    print(os.getcwdb())
     el = os.system(
         '..\\ffmpeg\\bin\\ffprobe.exe -i "{}"  2> "..\\tmp\\ffprobe.log"'.format(src))
     if not el == 0:
@@ -172,8 +172,8 @@ def fpskaStart(self, src, mode):
         print("Ошибка создания Vapoursynth скрипта")
         return False
     print("[4/5] Преобразуем в 60 fps")
-    ffmpeg_presets = ['libx264 -crf 24 -preset fast ..\\tmp\\60fps_video.mp4',
-                      'libx264 -crf 24 -preset medium ..\\tmp\\60fps_video.mp4',
+    ffmpeg_presets = ['libx264 -crf 20 -preset fast ..\\tmp\\60fps_video.mp4',
+                      'libx264 -crf 20 -preset medium ..\\tmp\\60fps_video.mp4',
                       'libx264 -crf 20 -preset slow ..\\tmp\\60fps_video.mp4',
                       'huffyuv ..\\tmp\\60fps_video.avi']
     cmd_vspipe = ['..\\python\\VSPipe.exe', '--y4m', 'work.pvy', '-']
@@ -257,7 +257,7 @@ class FileDnD(wx.FileDropTarget):
 
     def OnDropFiles(self, x, y, filenames):
         for fp in filenames:
-            if os.path.splitext(fp)[1] in [".mp4", ".avi", ".mkv", ".m2ts", ".mts", ".mov", ".3gp", ".3g2", ".wmv", ".flv"]:
+            if os.path.splitext(fp)[1] in [".MP4", ".mp4", ".AVI", ".avi", ".MKV", ".mkv", ".M2TS", ".m2ts", ".MTS", ".mts", ".MOV", ".mov", "3.GP", ".3gp", ".3G2", ".3g2", ".WMV", ".wmv", ".flv", ".flv"]:
                 if self.window.srcfiles.count(fp) == 0:
                     self.window.srcfiles.append(fp)
                     self.window.flist.Insert(fp, 0)
