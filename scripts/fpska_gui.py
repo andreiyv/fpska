@@ -330,7 +330,7 @@ class MainWindow(wx.Frame):
         self.Show(True)
         self.stdout = gstdout(self.console)
         sys.stdout = self.stdout
-        print(f"~fpska-{fpska_version}-gui~\n")
+        print(f"fpska-{fpska_version}\n")
         print(f"--------------------------------")
         print(
             f"Перетащите сюда файлы;\n"
@@ -343,6 +343,10 @@ class MainWindow(wx.Frame):
 Для перевода в 60 fps используются библиотеки svpflow.
 Вспомогательные библиотеки:
 ffmpeg, vapoursynth, eac3, mkvtoolnix.
+
+Разработчики:
+voran, ihujg2346
+
         """            
 
         info = wx.adv.AboutDialogInfo()
